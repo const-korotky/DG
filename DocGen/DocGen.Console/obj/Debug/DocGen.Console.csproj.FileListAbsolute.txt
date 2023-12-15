@@ -1,0 +1,7 @@
+D:\MSC\DG\DocGen\DocGen.Console\bin\Debug\DocGen.Console.exe.config
+D:\MSC\DG\DocGen\DocGen.Console\bin\Debug\DocGen.Console.exe
+D:\MSC\DG\DocGen\DocGen.Console\bin\Debug\DocGen.Console.pdb
+D:\MSC\DG\DocGen\DocGen.Console\obj\Debug\DocGen.Console.csproj.AssemblyReference.cache
+D:\MSC\DG\DocGen\DocGen.Console\obj\Debug\DocGen.Console.csproj.CoreCompileInputs.cache
+D:\MSC\DG\DocGen\DocGen.Console\obj\Debug\DocGen.Console.exe
+D:\MSC\DG\DocGen\DocGen.Console\obj\Debug\DocGen.Console.pdb
