@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DocGen.Console
+namespace DocGen.Processor
 {
     public class Entry
     {
@@ -55,7 +55,7 @@ namespace DocGen.Console
     public class DateInterval
     {
         public DateTime Start { get; set; }
-        public DateTime End{ get; set; }
+        public DateTime End { get; set; }
 
         public int Days => (End - Start).Days;
     }

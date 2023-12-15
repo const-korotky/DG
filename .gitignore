@@ -1,5 +1,11 @@
 examples
 /examples.copy
+
 /DocGen/DocGen.Console/obj
 /DocGen/DocGen.Console/bin
+/DocGen/DocGen.Console/.vs
+
 /DocGen/.vs
+/DocGen/DocGen.Processor/bin
+/DocGen/DocGen.Processor/obj
+/DocGen/DocGen.Processor/.vs
