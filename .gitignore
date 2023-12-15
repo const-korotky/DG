@@ -2,3 +2,4 @@ examples
 /examples.copy
 /DocGen/DocGen.Console/obj
 /DocGen/DocGen.Console/bin
+/DocGen/.vs
