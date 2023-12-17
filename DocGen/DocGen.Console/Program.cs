@@ -5,9 +5,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Word;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using WordApplication = Microsoft.Office.Interop.Word.Application;
+using WordDocument = Microsoft.Office.Interop.Word.Document;
 using DocGen.Processor;
+using System.IO;
 
 namespace DocGen.Console
 {
@@ -15,11 +18,11 @@ namespace DocGen.Console
     {
         static void Main(string[] args)
         {
-            //ProcessExcel();
+            //ProcessExcel(populate: true);
             ProcessWord();
         }
 
-        private static void ProcessExcel()
+        private static List<Entry> ProcessExcel(bool populate = false)
         {
             var srcPath = @"D:\MSC\DG\examples.copy\Передок жовтень 2023.xlsx";
             var destPath = $"D:\\MSC\\DG\\examples.copy\\Excel_res{DateTime.Now.Ticks}.xlsx";
@@ -29,23 +32,27 @@ namespace DocGen.Console
             ExcelApplication app = new ExcelApplication();
 
             var entries = ExcelProcessor.ExtractEntries(app, srcPath, sheet, range);
-            ExcelProcessor.PopulateEntries(app, destPath, sheet, entries);
-
-            /*var entries = ExcelProcessor.ReadEntries(app, srcPath, sheet, range);
-            ExcelProcessor.WriteEntries(app, destPath, sheet, entries);*/
+            entries.ForEach(entry => entry.PopulateLocationMap());
+            if (populate)
+            {
+                ExcelProcessor.PopulateEntries(app, destPath, sheet, entries);
+            }
 
             app.Quit();
             Marshal.FinalReleaseComObject(app);
+
+            return entries;
         }
+
         private static void ProcessWord()
         {
-            var srcPath = @"D:\MSC\DG\examples.copy\БН_НАЧПВЗ_37_041023.docx";
-            var destPath = $"D:\\MSC\\DG\\examples.copy\\Word_res{DateTime.Now.Ticks}.docx";
+            var templPath = @"D:\MSC\DG\examples.copy\РАПОРТ_template.doc";
+            var destPath = $"D:\\MSC\\DG\\examples.copy\\Word_res{DateTime.Now.Ticks}.doc";
 
             WordApplication app = new WordApplication();
 
-            var doc = WordProcessor.ReadEntries(app, srcPath);
-            WordProcessor.WriteEntries(app, doc, destPath);
+            var entries = ProcessExcel(populate: false);
+            WordProcessor.GenerateReport(app, templPath, destPath, entries);
 
             app.Quit();
             Marshal.FinalReleaseComObject(app);

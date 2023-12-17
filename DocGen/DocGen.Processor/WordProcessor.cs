@@ -14,6 +14,73 @@ namespace DocGen.Processor
 {
     public class WordProcessor
     {
+        public static void GenerateReport
+            ( WordApplication app
+            , string templatePath
+            , string destinationPath
+            , List<Entry> entries
+            ) {
+            WordDocument doc = null;
+
+            try
+            {
+                doc = app.Documents.Open(templatePath, ReadOnly: true, Visible: false);
+
+                Table table = doc.Tables[1];
+                var rowIndex = 2;
+
+                foreach (var entry in entries)
+                {
+                    int daysTotal = entry.GetDaysTotal();
+                    if (daysTotal > 0)
+                    {
+                        PopulateTableRow(table, rowIndex, entry, daysTotal);
+                        table.Rows.Add();
+                        ++rowIndex;
+                    }
+                }
+                //table.Rows.Last.Delete();
+                doc.SaveAs(destinationPath);
+                doc.Close(true);
+            }
+            catch
+            {
+            }
+            Marshal.FinalReleaseComObject(doc);
+        }
+
+        private static void PopulateTableRow
+            ( Table table
+            , int rowIndex
+            , Entry entry
+            , int daysTotal
+            ) {
+            Range cell;
+            cell = table.Cell(rowIndex, 1).Range;
+            cell.Text = $"{rowIndex - 1}.";
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            cell = table.Cell(rowIndex, 2).Range;
+            cell.Text = $"N/A";
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            cell = table.Cell(rowIndex, 3).Range;
+            cell.Text = entry.Name;
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            cell = table.Cell(rowIndex, 4).Range;
+            cell.Text = entry.FormatTotalIntervals(days: false, full: false);
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            cell = table.Cell(rowIndex, 5).Range;
+            cell.Text = $"{daysTotal}";
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            cell = table.Cell(rowIndex, 6).Range;
+            cell.Text = $"N/A";
+            cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+        }
+
         #region Raw Entries Read/Write
 
         public static WordDocument ReadEntries(WordApplication app, string path)
@@ -42,7 +109,6 @@ namespace DocGen.Processor
             catch { }
             return doc;
         }
-
         public static void WriteEntries(WordApplication app, WordDocument doc, string path)
         {
             var newDoc = app.Documents.Add();

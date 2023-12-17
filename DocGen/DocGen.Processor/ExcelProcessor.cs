@@ -12,16 +12,23 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor
     {
-        public static List<Entry> ExtractEntries(ExcelApplication app, string path, string sheetName, string range)
-        {
-            Workbook workbook = app.Workbooks.Open(path);
-            Worksheet worksheet = workbook.Sheets[sheetName];
-            Range rows = worksheet.Range[range].Rows;
+        public static List<Entry> ExtractEntries
+            ( ExcelApplication app
+            , string path
+            , string sheetName
+            , string range
+            ) {
+            Workbook workbook = null;
+            Worksheet worksheet = null;
 
             List<Entry> entries = new List<Entry>();
 
             try
             {
+                workbook = app.Workbooks.Open(path);
+                worksheet = workbook.Sheets[sheetName];
+                Range rows = worksheet.Range[range].Rows;
+
                 foreach (Range row in rows)
                 {
                     var entry = new Entry();
@@ -63,30 +70,34 @@ namespace DocGen.Processor
                     currLoc.Interval.End = currLoc.Interval.Start.AddDays(dayCount);
                     entry.Locations.Add(currLoc);
                     entries.Add(entry);
-
-                    Console.WriteLine();
                 }
+                workbook.Close(false);
             }
             catch
             {
             }
-            workbook.Close(false);
             Marshal.FinalReleaseComObject(worksheet);
             Marshal.FinalReleaseComObject(workbook);
 
             return entries.Where(entry => !string.IsNullOrWhiteSpace(entry.Name)).ToList();
         }
-        public static void PopulateEntries(ExcelApplication app, string path, string sheetName, List<Entry> entries)
-        {
-            entries.ForEach(entry => entry.PopulateLocationMap());
-            var locations = MergeLocations(entries);
 
-            Workbook workBook = app.Workbooks.Add(System.Reflection.Missing.Value);
-            Worksheet workSheet = workBook.Worksheets.get_Item(1);
-            workSheet.Name = sheetName;
+        public static void PopulateEntries
+            ( ExcelApplication app
+            , string path
+            , string sheetName
+            , List<Entry> entries
+            ) {
+            Workbook workBook = null;
+            Worksheet workSheet = null;
+            var locations = Entry.MergeLocations(entries);
 
             try
             {
+                workBook = app.Workbooks.Add();
+                workSheet = workBook.Worksheets.get_Item(1);
+                workSheet.Name = sheetName;
+
                 var rowIndex = 1;
                 var colIndex = 1;
                 workSheet.Cells[rowIndex, colIndex] = "ФІО";
@@ -105,43 +116,19 @@ namespace DocGen.Processor
                         ++colIndex;
                         if (entry.LocationMap.ContainsKey(location))
                         {
-                            workSheet.Cells[rowIndex, colIndex] = FormatLocationIntervals(entry.LocationMap[location]);
+                            string intervalsFormat = entry.FormatLocationIntervals(location, days: true, full: true);
+                            workSheet.Cells[rowIndex, colIndex] = intervalsFormat;
                         }
                     }
                 }
+                workBook.SaveAs(path, XlFileFormat.xlWorkbookDefault);
+                workBook.Close(true);
             }
-            catch { }
-
-            workBook.SaveAs(path, XlFileFormat.xlWorkbookDefault);
-            workBook.Close(true);
+            catch
+            {
+            }
             Marshal.ReleaseComObject(workSheet);
             Marshal.ReleaseComObject(workBook);
-        }
-
-        private static List<string> MergeLocations(List<Entry> entries)
-        {
-            var locations = new List<string>();
-            foreach (var entry in entries)
-            {
-                foreach (var location in entry.LocationMap.Keys)
-                {
-                    if (!locations.Contains(location))
-                    {
-                        locations.Add(location);
-                    }
-                }
-            }
-            return locations;
-        }
-        private static string FormatLocationIntervals(List<DateInterval> intervals)
-        {
-            string res = string.Empty;
-            foreach (var interval in intervals)
-            {
-                res += $"{interval.Start:dd/MM/yyyy} - {interval.End.AddDays(-1):dd/MM/yyyy} ({interval.Days} днів)";
-                res += Environment.NewLine;
-            }
-            return res.TrimEnd();
         }
 
         #region Raw Entries Read/Write
