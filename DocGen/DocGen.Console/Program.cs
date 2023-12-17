@@ -51,7 +51,7 @@ namespace DocGen.Console
 
             WordApplication app = new WordApplication();
 
-            var entries = ProcessExcel(populate: false);
+            var entries = ProcessExcel(populate: true);
             WordProcessor.GenerateReport(app, templPath, destPath, entries);
 
             app.Quit();

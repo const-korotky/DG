@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -100,16 +101,24 @@ namespace DocGen.Processor
 
                 var rowIndex = 1;
                 var colIndex = 1;
-                workSheet.Cells[rowIndex, colIndex] = "ФІО";
+                Range cell;
+
+                cell = workSheet.Cells[rowIndex, colIndex];
+                cell.Value = null;
+                SetStyle_CornerCell(cell);
 
                 foreach (var location in locations)
                 {
-                    workSheet.Cells[rowIndex, ++colIndex] = location;
+                    cell = workSheet.Cells[rowIndex, ++colIndex];
+                    cell.Value = location;
+                    SetStyle_LocationCell(cell);
                 }
                 foreach (var entry in entries)
                 {
                     colIndex = 1;
-                    workSheet.Cells[++rowIndex, colIndex] = entry.Name;
+                    cell = workSheet.Cells[++rowIndex, colIndex];
+                    cell.Value = entry.Name;
+                    SetStyle_NameCell(cell);
 
                     foreach (var location in locations)
                     {
@@ -121,6 +130,13 @@ namespace DocGen.Processor
                         }
                     }
                 }
+                workSheet.Columns.AutoFit();
+                workSheet.Rows.AutoFit();
+
+                workSheet.Application.ActiveWindow.SplitRow = 1;
+                workSheet.Application.ActiveWindow.SplitColumn = 1;
+                workSheet.Application.ActiveWindow.FreezePanes = true;
+
                 workBook.SaveAs(path, XlFileFormat.xlWorkbookDefault);
                 workBook.Close(true);
             }
@@ -129,6 +145,39 @@ namespace DocGen.Processor
             }
             Marshal.ReleaseComObject(workSheet);
             Marshal.ReleaseComObject(workBook);
+        }
+
+        private static void SetStyle_NameCell(Range cell)
+        {
+            cell.Font.Bold = true;
+            cell.HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            cell.Interior.Color = ColorTranslator.ToOle(Color.LightGreen);
+            cell.Borders[XlBordersIndex.xlEdgeBottom].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeRight].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeBottom].Weight = XlBorderWeight.xlThin;
+            cell.Borders[XlBordersIndex.xlEdgeRight].Weight = XlBorderWeight.xlThin;
+        }
+
+        private static void SetStyle_LocationCell(Range cell)
+        {
+            cell.Font.Bold = true;
+            cell.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+            cell.Interior.Color = ColorTranslator.ToOle(Color.LightBlue);
+            cell.Borders[XlBordersIndex.xlEdgeBottom].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeRight].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeBottom].Weight = XlBorderWeight.xlThin;
+            cell.Borders[XlBordersIndex.xlEdgeRight].Weight = XlBorderWeight.xlThin;
+        }
+
+        private static void SetStyle_CornerCell(Range cell)
+        {
+            cell.Interior.Color = ColorTranslator.ToOle(Color.White);
+            cell.Borders[XlBordersIndex.xlDiagonalDown].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeRight].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlEdgeBottom].LineStyle = XlLineStyle.xlContinuous;
+            cell.Borders[XlBordersIndex.xlDiagonalDown].Weight = XlBorderWeight.xlMedium;
+            cell.Borders[XlBordersIndex.xlEdgeRight].Weight = XlBorderWeight.xlThin;
+            cell.Borders[XlBordersIndex.xlEdgeBottom].Weight = XlBorderWeight.xlThin;
         }
 
         #region Raw Entries Read/Write
