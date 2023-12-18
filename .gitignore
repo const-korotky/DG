@@ -9,3 +9,5 @@ examples
 /DocGen/DocGen.Processor/bin
 /DocGen/DocGen.Processor/obj
 /DocGen/DocGen.Processor/.vs
+/DocGen/DocGen.Desktop/bin
+/DocGen/DocGen.Desktop/obj

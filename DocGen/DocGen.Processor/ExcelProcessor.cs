@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,6 +14,58 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor
     {
+        public string SourceDataFilePath { get; set; }
+        public string DestinationFilePath
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_destinationFilePath))
+                {
+                    var dirPath = Path.GetDirectoryName(SourceDataFilePath);
+                    _destinationFilePath = Path.Combine(dirPath, $"Excel_res{DateTime.Now.Ticks}.xlsx");
+                }
+                return _destinationFilePath;
+            }
+        }
+        public string _destinationFilePath;
+
+        public string SheetName { get; set; }
+
+        public List<BR> BRs { get; private set; }
+        public List<Entry> Entries { get; private set; }
+
+
+        public void Process(bool populate = false)
+        {
+            /*var sheet = "жовтень";
+            var range = "A2:AF124";
+            var startDate = new DateTime(2023, 10, 1);*/
+            //var sheet = "серпень";
+            var range = "A2:AF92";
+            //var startDate = new DateTime(2023, 8, 1);
+            var startDate = GetStartDate(SheetName);
+
+            var rangeBRs = "A95:A112";
+
+            ExcelApplication app = new ExcelApplication();
+            Workbook workbook = app.Workbooks.Open(SourceDataFilePath);
+
+            BRs = ExtractBRs(workbook, SheetName, rangeBRs);
+            Entries = ExtractEntries(workbook, SheetName, range, startDate);
+
+            Entries.ForEach(entry => entry.PopulateLocationMap());
+            if (populate)
+            {
+                PopulateEntries(app, DestinationFilePath, SheetName, Entries);
+            }
+
+            workbook.Close(false);
+            app.Quit();
+            Marshal.FinalReleaseComObject(workbook);
+            Marshal.FinalReleaseComObject(app);
+        }
+
+
         public static List<BR> ExtractBRs
             ( Workbook workbook
             , string sheetName
@@ -273,5 +326,31 @@ namespace DocGen.Processor
         }
 
         #endregion Raw Entries Read/Write
+
+        #region DateTime Processing
+
+        private static DateTime GetStartDate(string monthName)
+        {
+            int month = 0;
+            switch (monthName.ToUpper())
+            {
+                case "СІЧЕНЬ":   { month = 1; break;  }
+                case "ЛЮТИЙ":    { month = 2; break;  }
+                case "БЕРЕЗЕНЬ": { month = 3; break;  }
+                case "КВІТЕНЬ":  { month = 4; break;  }
+                case "ТРАВЕНЬ":  { month = 5; break;  }
+                case "ЧЕРВЕНЬ":  { month = 6; break;  }
+                case "ЛИПЕНЬ":   { month = 7; break;  }
+                case "СЕРПЕНЬ":  { month = 8; break;  }
+                case "ВЕРЕСЕНЬ": { month = 9; break;  }
+                case "ЖОВТЕНЬ":  { month = 10; break; }
+                case "ЛИСТОПАД": { month = 11; break; }
+                case "ГРУДЕНЬ":  { month = 12; break; }
+                default: break;
+            }
+            return new DateTime(DateTime.Today.Year, month, 1);
+        }
+
+        #endregion DateTime Processing
     }
 }

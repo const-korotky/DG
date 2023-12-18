@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -14,6 +15,42 @@ namespace DocGen.Processor
 {
     public class WordProcessor
     {
+        public string TemplateFilePath { get; set; }
+        public string DestinationFilePath
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_destinationFilePath))
+                {
+                    var dirPath = Path.GetDirectoryName(TemplateFilePath);
+                    _destinationFilePath = Path.Combine(dirPath, $"Word_res{DateTime.Now.Ticks}.doc");
+                }
+                return _destinationFilePath;
+            }
+        }
+        public string _destinationFilePath;
+
+
+        public static void OpenDocumnet(string filePath)
+        {
+            WordApplication app = new WordApplication();
+
+            var doc = app.Documents.Open(filePath, ReadOnly: true, Visible: true);
+
+            Marshal.FinalReleaseComObject(doc);
+            Marshal.FinalReleaseComObject(app);
+        }
+
+        public void Process(List<BR> brs, List<Entry> entries)
+        {
+            WordApplication app = new WordApplication();
+
+            GenerateReport(app, TemplateFilePath, DestinationFilePath, entries, brs);
+
+            app.Quit();
+            Marshal.FinalReleaseComObject(app);
+        }
+
         public static void GenerateReport
             ( WordApplication app
             , string templatePath
