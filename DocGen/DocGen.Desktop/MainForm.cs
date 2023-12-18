@@ -24,6 +24,8 @@ namespace DocGen.Desktop
             InitializeComponent();
         }
 
+        private void MainForm_Load(object sender, EventArgs e) { }
+
         private void btn_open_szt_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog
@@ -46,12 +48,6 @@ namespace DocGen.Desktop
                 tbx_data.Text = dialog.FileName;
             }
         }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void btn_open_templ_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog
@@ -63,31 +59,51 @@ namespace DocGen.Desktop
                 tbx_templ.Text = dialog.FileName;
             }
         }
+        private void btn_open_raport_Click(object sender, EventArgs e)
+        {
+            WordProcessor.OpenDocumnet(txb_raport_path.Text);
+        }
+
 
         private void btn_generate_Click(object sender, EventArgs e)
         {
-            /*var excelProcessor = new ExcelProcessor
+            gb_progress.Visible = true;
+            btn_generate.Enabled = false;
+            gb_result.Visible = false;
+
+            var excelProcessor = new ExcelProcessor
             {
                 SourceDataFilePath = tbx_data.Text,
-                SheetName = cmbx_month.SelectedItem.ToString()
+                SheetName = cmbx_month.SelectedItem.ToString(),
             };
+            excelProcessor.ProgressUpdated += progressUpdated_EventHandler;
             excelProcessor.Process(populate: true);
+            excelProcessor.ProgressUpdated -= progressUpdated_EventHandler;
 
             var wordProcessor = new WordProcessor
             {
                 TemplateFilePath = tbx_templ.Text
             };
-            wordProcessor.Process(excelProcessor.BRs, excelProcessor.Entries);*/
+            wordProcessor.ProgressUpdated += progressUpdated_EventHandler;
+            wordProcessor.Process(excelProcessor.BRs, excelProcessor.Entries);
+            wordProcessor.ProgressUpdated -= progressUpdated_EventHandler;
 
             DialogBox.ShowInfo(this, "Генерацію Рапорта завершено.", "Інформація");
 
-            gb_result.Visible = true;
-            //txb_raport_path.Text = wordProcessor.DestinationFilePath;
-        }
+            btn_generate.Enabled = true;
+            progressBar.Value = 100;
+            lb_progress.Text = "операцію завершено";
 
-        private void btn_raport_open_Click(object sender, EventArgs e)
+            gb_result.Visible = true;
+            txb_raport_path.Text = wordProcessor.DestinationFilePath;
+        }
+        private void progressUpdated_EventHandler(int percentage, string message = null)
         {
-            WordProcessor.OpenDocumnet(txb_raport_path.Text);
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                lb_progress.Text = $"{percentage}% - {message}";
+            }
+            progressBar.Value = percentage;
         }
     }
 }

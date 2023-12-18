@@ -43,12 +43,16 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btn_generate = new System.Windows.Forms.Button();
             this.gb_result = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txb_raport_path = new System.Windows.Forms.TextBox();
             this.btn_raport_open = new System.Windows.Forms.Button();
+            this.txb_raport_path = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.gb_progress = new System.Windows.Forms.GroupBox();
+            this.lb_progress = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
+            this.gb_progress.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -63,7 +67,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(899, 169);
+            this.groupBox1.Size = new System.Drawing.Size(899, 158);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Зазначте шлях до даних";
@@ -161,7 +165,7 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Location = new System.Drawing.Point(12, 187);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(899, 128);
+            this.groupBox2.Size = new System.Drawing.Size(899, 129);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Зазначте шлях до шаблону";
@@ -196,7 +200,7 @@
             // 
             // btn_generate
             // 
-            this.btn_generate.Location = new System.Drawing.Point(12, 321);
+            this.btn_generate.Location = new System.Drawing.Point(12, 322);
             this.btn_generate.Name = "btn_generate";
             this.btn_generate.Size = new System.Drawing.Size(135, 35);
             this.btn_generate.TabIndex = 2;
@@ -209,13 +213,30 @@
             this.gb_result.Controls.Add(this.btn_raport_open);
             this.gb_result.Controls.Add(this.txb_raport_path);
             this.gb_result.Controls.Add(this.label5);
-            this.gb_result.Location = new System.Drawing.Point(12, 392);
+            this.gb_result.Location = new System.Drawing.Point(12, 363);
             this.gb_result.Name = "gb_result";
-            this.gb_result.Size = new System.Drawing.Size(899, 100);
+            this.gb_result.Size = new System.Drawing.Size(899, 84);
             this.gb_result.TabIndex = 3;
             this.gb_result.TabStop = false;
             this.gb_result.Text = "Результат";
             this.gb_result.Visible = false;
+            // 
+            // btn_raport_open
+            // 
+            this.btn_raport_open.Location = new System.Drawing.Point(753, 29);
+            this.btn_raport_open.Name = "btn_raport_open";
+            this.btn_raport_open.Size = new System.Drawing.Size(135, 35);
+            this.btn_raport_open.TabIndex = 3;
+            this.btn_raport_open.Text = "Відкрити";
+            this.btn_raport_open.UseVisualStyleBackColor = true;
+            this.btn_raport_open.Click += new System.EventHandler(this.btn_open_raport_Click);
+            // 
+            // txb_raport_path
+            // 
+            this.txb_raport_path.Location = new System.Drawing.Point(152, 33);
+            this.txb_raport_path.Name = "txb_raport_path";
+            this.txb_raport_path.Size = new System.Drawing.Size(586, 26);
+            this.txb_raport_path.TabIndex = 1;
             // 
             // label5
             // 
@@ -226,32 +247,45 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Рапорт:";
             // 
-            // txb_raport_path
+            // gb_progress
             // 
-            this.txb_raport_path.Location = new System.Drawing.Point(152, 33);
-            this.txb_raport_path.Name = "txb_raport_path";
-            this.txb_raport_path.Size = new System.Drawing.Size(586, 26);
-            this.txb_raport_path.TabIndex = 1;
+            this.gb_progress.Controls.Add(this.lb_progress);
+            this.gb_progress.Controls.Add(this.progressBar);
+            this.gb_progress.Location = new System.Drawing.Point(12, 572);
+            this.gb_progress.Name = "gb_progress";
+            this.gb_progress.Size = new System.Drawing.Size(899, 80);
+            this.gb_progress.TabIndex = 4;
+            this.gb_progress.TabStop = false;
+            this.gb_progress.Text = "Прогрес";
+            this.gb_progress.Visible = false;
             // 
-            // btn_raport_open
+            // lb_progress
             // 
-            this.btn_raport_open.Location = new System.Drawing.Point(753, 29);
-            this.btn_raport_open.Name = "btn_raport_open";
-            this.btn_raport_open.Size = new System.Drawing.Size(135, 35);
-            this.btn_raport_open.TabIndex = 3;
-            this.btn_raport_open.Text = "Відкрити";
-            this.btn_raport_open.UseVisualStyleBackColor = true;
-            this.btn_raport_open.Click += new System.EventHandler(this.btn_raport_open_Click);
+            this.lb_progress.AutoSize = true;
+            this.lb_progress.Location = new System.Drawing.Point(6, 22);
+            this.lb_progress.Name = "lb_progress";
+            this.lb_progress.Size = new System.Drawing.Size(25, 20);
+            this.lb_progress.TabIndex = 4;
+            this.lb_progress.Text = "....";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(6, 45);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(882, 23);
+            this.progressBar.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(923, 664);
+            this.Controls.Add(this.gb_progress);
             this.Controls.Add(this.gb_result);
             this.Controls.Add(this.btn_generate);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.MaximumSize = new System.Drawing.Size(945, 720);
             this.MinimumSize = new System.Drawing.Size(945, 720);
             this.Name = "MainForm";
             this.Text = "Рапорт Генератор";
@@ -262,6 +296,8 @@
             this.groupBox2.PerformLayout();
             this.gb_result.ResumeLayout(false);
             this.gb_result.PerformLayout();
+            this.gb_progress.ResumeLayout(false);
+            this.gb_progress.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -286,6 +322,9 @@
         private System.Windows.Forms.Button btn_raport_open;
         private System.Windows.Forms.TextBox txb_raport_path;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.GroupBox gb_progress;
+        private System.Windows.Forms.Label lb_progress;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

@@ -16,6 +16,8 @@ namespace DocGen.Processor
 {
     public class WordProcessor
     {
+        public event Action<int, string> ProgressUpdated;
+
         public string TemplateFilePath { get; set; }
         public string DestinationFilePath
         {
@@ -39,12 +41,17 @@ namespace DocGen.Processor
 
         public void Process(List<BR> brs, List<Entry> entries)
         {
+            ProgressUpdated(70, "відкриття файлу шаблона...");
             WordApplication app = new WordApplication();
+            ProgressUpdated(79, "відкриття файлу шаблона...");
 
+            ProgressUpdated(80, "розпочато генерацію рапорта...");
             GenerateReport(app, TemplateFilePath, DestinationFilePath, entries, brs);
+            ProgressUpdated(91, "генерацію рапорта завершено");
 
             app.Quit();
             Marshal.FinalReleaseComObject(app);
+            ProgressUpdated(98, "рапорта збережено на диск");
         }
 
         public static void GenerateReport

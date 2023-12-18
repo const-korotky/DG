@@ -14,6 +14,8 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor
     {
+        public event Action<int, string> ProgressUpdated;
+
         public string SourceDataFilePath { get; set; }
         public string DestinationFilePath
         {
@@ -47,22 +49,35 @@ namespace DocGen.Processor
 
             var rangeBRs = "A95:A112";
 
+            ProgressUpdated(5, "відкриття файлу даних...");
             ExcelApplication app = new ExcelApplication();
             Workbook workbook = app.Workbooks.Open(SourceDataFilePath);
+            ProgressUpdated(8, "відкриття файлу даних завершено");
 
+            ProgressUpdated(9, "початок зчитування беерок...");
             BRs = ExtractBRs(workbook, SheetName, rangeBRs);
-            Entries = ExtractEntries(workbook, SheetName, range, startDate);
+            ProgressUpdated(19, "зчитування беерок завершено");
 
+            ProgressUpdated(20, "початок зчитування даних по локаціям....");
+            Entries = ExtractEntries(workbook, SheetName, range, startDate);
+            ProgressUpdated(39, "зчитування даних по локаціям завершено");
+
+            ProgressUpdated(40, "формування списку локацій....");
             Entries.ForEach(entry => entry.PopulateLocationMap());
+            ProgressUpdated(44, "формування списку локацій заваршено");
+
             if (populate)
             {
+                ProgressUpdated(45, "генерація проміжного звіту...");
                 PopulateEntries(app, DestinationFilePath, SheetName, Entries);
+                ProgressUpdated(67, "генерація проміжного звіту завершена");
             }
 
             workbook.Close(false);
             app.Quit();
             Marshal.FinalReleaseComObject(workbook);
             Marshal.FinalReleaseComObject(app);
+            ProgressUpdated(68, "завантаження та обробку даних завершено");
         }
 
 
