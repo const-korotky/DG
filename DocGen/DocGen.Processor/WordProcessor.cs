@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -33,12 +34,7 @@ namespace DocGen.Processor
 
         public static void OpenDocumnet(string filePath)
         {
-            WordApplication app = new WordApplication();
-
-            var doc = app.Documents.Open(filePath, ReadOnly: true, Visible: true);
-
-            Marshal.FinalReleaseComObject(doc);
-            Marshal.FinalReleaseComObject(app);
+            System.Diagnostics.Process.Start("winword.exe", filePath);
         }
 
         public void Process(List<BR> brs, List<Entry> entries)
