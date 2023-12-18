@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,37 @@ namespace DocGen.Processor
             return locations;
         }
 
+        #region Format BRs
+
+        public string FormatLocationBRs(string location, IEnumerable<BR> brs)
+        {
+            return FormatBRs(_locationMap[location], brs);
+        }
+        public string FormatTotalBRs(IEnumerable<BR> brs)
+        {
+            return FormatBRs(ValidLocations.SelectMany(i => i.Value), brs);
+        }
+        public static string FormatBRs
+            ( IEnumerable<DateInterval> intervals
+            , IEnumerable<BR> brs
+            ) {
+            var resBRs = new List<BR>();
+
+            foreach (var interval in intervals)
+            {
+                var br = brs.FirstOrDefault(i => i.ColorID == interval.ColorID);
+                if ((br != null) && !resBRs.Exists(i => i.ColorID == br.ColorID))
+                {
+                    resBRs.Add(br);
+                }
+            }
+            return string.Join($",{Environment.NewLine}", resBRs.Select(i => i.Text)).Trim();
+        }
+
+        #endregion Format BRs
+
+        #region Format Intervals
+
         public string FormatLocationIntervals
             ( string location
             , bool days = false
@@ -86,7 +118,7 @@ namespace DocGen.Processor
                     }
                     else
                     {
-                        res += $"{interval.Start:dd} - {interval.End.AddDays(-1):dd.MM.yyyy}";
+                        res += $"{interval.Start:dd}-{interval.End.AddDays(-1):dd.MM.yyyy}";
                     }
                 }
                 if (days)
@@ -97,6 +129,8 @@ namespace DocGen.Processor
             }
             return res.TrimEnd();
         }
+
+        #endregion Format Intervals
 
         public int GetDaysOnLocation(string location)
         {
@@ -119,18 +153,27 @@ namespace DocGen.Processor
         {
             _interval = new DateInterval();
         }
-        public Location(string name, DateTime start) : this()
+        public Location(string name, double colorID, DateTime start) : this()
         {
             Name = name;
+            Interval.ColorID = colorID;
             Interval.Start = start;
         }
     }
 
     public class DateInterval
     {
+        public double ColorID { get; set; }
+
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
 
         public int Days => (End - Start).Days;
+    }
+
+    public class BR
+    {
+        public double ColorID { get; set; }
+        public string Text { get; set; }
     }
 }

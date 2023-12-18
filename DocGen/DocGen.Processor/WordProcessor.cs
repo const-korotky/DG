@@ -19,9 +19,9 @@ namespace DocGen.Processor
             , string templatePath
             , string destinationPath
             , List<Entry> entries
+            , List<BR> brs
             ) {
             WordDocument doc = null;
-
             try
             {
                 doc = app.Documents.Open(templatePath, ReadOnly: true, Visible: false);
@@ -34,7 +34,7 @@ namespace DocGen.Processor
                     int daysTotal = entry.GetDaysTotal();
                     if (daysTotal > 0)
                     {
-                        PopulateTableRow(table, rowIndex, entry, daysTotal);
+                        PopulateTableRow(table, rowIndex, entry, daysTotal, brs);
                         table.Rows.Add();
                         ++rowIndex;
                     }
@@ -54,7 +54,9 @@ namespace DocGen.Processor
             , int rowIndex
             , Entry entry
             , int daysTotal
-            ) {
+            , IEnumerable<BR> brs
+            )
+        {
             Range cell;
             cell = table.Cell(rowIndex, 1).Range;
             cell.Text = $"{rowIndex - 1}.";
@@ -77,7 +79,7 @@ namespace DocGen.Processor
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
 
             cell = table.Cell(rowIndex, 6).Range;
-            cell.Text = $"N/A";
+            cell.Text = entry.FormatTotalBRs(brs);
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
         }
 

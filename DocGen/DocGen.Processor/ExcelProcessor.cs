@@ -13,20 +13,48 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor
     {
-        public static List<Entry> ExtractEntries
-            ( ExcelApplication app
-            , string path
+        public static List<BR> ExtractBRs
+            ( Workbook workbook
             , string sheetName
             , string range
             ) {
-            Workbook workbook = null;
             Worksheet worksheet = null;
-
-            List<Entry> entries = new List<Entry>();
-
+            var brs = new List<BR>();
             try
             {
-                workbook = app.Workbooks.Open(path);
+                worksheet = workbook.Sheets[sheetName];
+                Range rows = worksheet.Range[range].Rows;
+
+                foreach (Range row in rows)
+                {
+                    var br = new BR();
+                    foreach (Range cell in row.Cells)
+                    {
+                        br.Text = (cell.Value as string);
+                        br.ColorID = cell.Interior.Color;
+                        brs.Add(br);
+
+                        Console.WriteLine($"BR[ColorID: {br.ColorID}][Text: {br.Text}]");
+                    }
+                }
+            }
+            catch
+            {
+            }
+            Marshal.FinalReleaseComObject(worksheet);
+            return brs;
+        }
+
+        public static List<Entry> ExtractEntries
+            ( Workbook workbook
+            , string sheetName
+            , string range
+            , DateTime start
+            ) {
+            Worksheet worksheet = null;
+            var entries = new List<Entry>();
+            try
+            {
                 worksheet = workbook.Sheets[sheetName];
                 Range rows = worksheet.Range[range].Rows;
 
@@ -34,28 +62,31 @@ namespace DocGen.Processor
                 {
                     var entry = new Entry();
                     var currLoc = new Location();
-                    currLoc.Interval.Start = new DateTime(2023, 10, 1);
+                    currLoc.Interval.Start = start;
                     var dayCount = 1;
 
                     foreach (Range cell in row.Cells)
                     {
-                        string value = (cell.Value as string);
+                        string name = (cell.Value as string);
+                        double colorID = cell.Interior.Color;
+
                         if (1 == cell.Column)
                         {
-                            entry.Name = value;
+                            entry.Name = name;
                             continue;
                         }
-                        if (string.IsNullOrWhiteSpace(value))
+                        if (string.IsNullOrWhiteSpace(name))
                         {
-                            value = "<UNKNOWN>";
+                            name = "<UNKNOWN>";
                         }
-                        value = value.ToUpper();
+                        name = name.ToUpper();
                         if (2 == cell.Column)
                         {
-                            currLoc.Name = value;
+                            currLoc.Name = name;
+                            currLoc.Interval.ColorID  = colorID;
                             continue;
                         }
-                        if (currLoc.Name == value)
+                        if ((currLoc.Name == name) && (currLoc.Interval.ColorID == colorID))
                         {
                             dayCount++;
                         }
@@ -63,23 +94,20 @@ namespace DocGen.Processor
                         {
                             currLoc.Interval.End = currLoc.Interval.Start.AddDays(dayCount);
                             entry.Locations.Add(currLoc);
-                            currLoc = new Location(name: value, start: currLoc.Interval.End);
+                            currLoc = new Location(name, colorID, currLoc.Interval.End);
                             dayCount = 1;
                         }
-                        Console.Write(value);
+                        Console.Write(name);
                     }
                     currLoc.Interval.End = currLoc.Interval.Start.AddDays(dayCount);
                     entry.Locations.Add(currLoc);
                     entries.Add(entry);
                 }
-                workbook.Close(false);
             }
             catch
             {
             }
             Marshal.FinalReleaseComObject(worksheet);
-            Marshal.FinalReleaseComObject(workbook);
-
             return entries.Where(entry => !string.IsNullOrWhiteSpace(entry.Name)).ToList();
         }
 
@@ -157,7 +185,6 @@ namespace DocGen.Processor
             cell.Borders[XlBordersIndex.xlEdgeBottom].Weight = XlBorderWeight.xlThin;
             cell.Borders[XlBordersIndex.xlEdgeRight].Weight = XlBorderWeight.xlThin;
         }
-
         private static void SetStyle_LocationCell(Range cell)
         {
             cell.Font.Bold = true;
@@ -168,7 +195,6 @@ namespace DocGen.Processor
             cell.Borders[XlBordersIndex.xlEdgeBottom].Weight = XlBorderWeight.xlThin;
             cell.Borders[XlBordersIndex.xlEdgeRight].Weight = XlBorderWeight.xlThin;
         }
-
         private static void SetStyle_CornerCell(Range cell)
         {
             cell.Interior.Color = ColorTranslator.ToOle(Color.White);
