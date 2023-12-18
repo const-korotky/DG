@@ -78,7 +78,7 @@ namespace DocGen.Console
 
         private static void ProcessWord()
         {
-            var templPath = @"D:\MSC\DG\examples.copy\РАПОРТ_template.doc";
+            var templPath = @"D:\MSC\DG\examples.copy\РАПОРТ_template_full.doc";
             var destPath = $"D:\\MSC\\DG\\examples.copy\\Word_res{DateTime.Now.Ticks}.doc";
 
             List<BR> brs;
