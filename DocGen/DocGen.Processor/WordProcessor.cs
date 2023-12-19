@@ -16,7 +16,14 @@ namespace DocGen.Processor
 {
     public class WordProcessor
     {
-        public event Action<int, string> ProgressUpdated;
+        public event Action<int, string> ProgressUpdatedEvent;
+        private void ProgressUpdated(double percentage, string message = null)
+        {
+            if (ProgressUpdatedEvent != null)
+            {
+                ProgressUpdatedEvent(Convert.ToInt32(Math.Round(percentage)), message);
+            }
+        }
 
         public string TemplateFilePath { get; set; }
         public string DestinationFilePath
@@ -54,7 +61,7 @@ namespace DocGen.Processor
             ProgressUpdated(98, "рапорта збережено на диск");
         }
 
-        public static void GenerateReport
+        public void GenerateReport
             ( WordApplication app
             , string templatePath
             , string destinationPath
@@ -69,6 +76,7 @@ namespace DocGen.Processor
                 Table table = doc.Tables[1];
                 var rowIndex = 2;
 
+                double progressPercent = 80;
                 foreach (var entry in entries)
                 {
                     int daysTotal = entry.GetDaysTotal();
@@ -78,6 +86,8 @@ namespace DocGen.Processor
                         table.Rows.Add();
                         ++rowIndex;
                     }
+                    progressPercent += 0.1;
+                    ProgressUpdated(progressPercent);
                 }
                 //table.Rows.Last.Delete();
                 doc.SaveAs(destinationPath);

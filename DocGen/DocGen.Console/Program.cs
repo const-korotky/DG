@@ -59,13 +59,15 @@ namespace DocGen.Console
             ExcelApplication app = new ExcelApplication();
             Workbook workbook = app.Workbooks.Open(srcPath);
 
+            var excelProcessor = new ExcelProcessor();
+
             brs = ExcelProcessor.ExtractBRs(workbook, sheet, rangeBRs);
-            var entries = ExcelProcessor.ExtractEntries(workbook, sheet, range, startDate);
+            var entries = excelProcessor.ExtractEntries(workbook, sheet, range, startDate);
 
             entries.ForEach(entry => entry.PopulateLocationMap());
             if (populate)
             {
-                ExcelProcessor.PopulateEntries(app, destPath, sheet, entries);
+                excelProcessor.PopulateEntries(app, destPath, sheet, entries);
             }
 
             workbook.Close(false);
@@ -86,7 +88,8 @@ namespace DocGen.Console
 
             WordApplication app = new WordApplication();
 
-            WordProcessor.GenerateReport(app, templPath, destPath, entries, brs);
+            var wordProcessor = new WordProcessor();
+            wordProcessor.GenerateReport(app, templPath, destPath, entries, brs);
 
             app.Quit();
             Marshal.FinalReleaseComObject(app);

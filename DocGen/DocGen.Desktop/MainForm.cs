@@ -76,17 +76,17 @@ namespace DocGen.Desktop
                 SourceDataFilePath = tbx_data.Text,
                 SheetName = cmbx_month.SelectedItem.ToString(),
             };
-            excelProcessor.ProgressUpdated += progressUpdated_EventHandler;
+            excelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
             excelProcessor.Process(populate: true);
-            excelProcessor.ProgressUpdated -= progressUpdated_EventHandler;
+            excelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
             var wordProcessor = new WordProcessor
             {
                 TemplateFilePath = tbx_templ.Text
             };
-            wordProcessor.ProgressUpdated += progressUpdated_EventHandler;
+            wordProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
             wordProcessor.Process(excelProcessor.BRs, excelProcessor.Entries);
-            wordProcessor.ProgressUpdated -= progressUpdated_EventHandler;
+            wordProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
             DialogBox.ShowInfo(this, "Генерацію Рапорта завершено.", "Інформація");
 
@@ -102,6 +102,15 @@ namespace DocGen.Desktop
             if (!string.IsNullOrWhiteSpace(message))
             {
                 lb_progress.Text = $"{percentage}% - {message}";
+            }
+            else
+            {
+                var text = lb_progress.Text;
+                if (!string.IsNullOrEmpty(text) && text.Contains("-"))
+                {
+                    var split = text.Split('-');
+                    lb_progress.Text = $"{percentage}% -{split[1]}";
+                }
             }
             progressBar.Value = percentage;
         }

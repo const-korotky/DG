@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,14 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor
     {
-        public event Action<int, string> ProgressUpdated;
+        public event Action<int, string> ProgressUpdatedEvent;
+        private void ProgressUpdated(double percentage, string message = null)
+        {
+            if (ProgressUpdatedEvent != null)
+            {
+                ProgressUpdatedEvent(Convert.ToInt32(Math.Round(percentage)), message);
+            }
+        }
 
         public string SourceDataFilePath { get; set; }
         public string DestinationFilePath
@@ -113,7 +121,7 @@ namespace DocGen.Processor
             return brs;
         }
 
-        public static List<Entry> ExtractEntries
+        public List<Entry> ExtractEntries
             ( Workbook workbook
             , string sheetName
             , string range
@@ -126,6 +134,7 @@ namespace DocGen.Processor
                 worksheet = workbook.Sheets[sheetName];
                 Range rows = worksheet.Range[range].Rows;
 
+                double progressPercent = 20;
                 foreach (Range row in rows)
                 {
                     var entry = new Entry();
@@ -170,6 +179,8 @@ namespace DocGen.Processor
                     currLoc.Interval.End = currLoc.Interval.Start.AddDays(dayCount);
                     entry.Locations.Add(currLoc);
                     entries.Add(entry);
+                    progressPercent += 0.2;
+                    ProgressUpdated(progressPercent);
                 }
             }
             catch
@@ -179,7 +190,7 @@ namespace DocGen.Processor
             return entries.Where(entry => !string.IsNullOrWhiteSpace(entry.Name)).ToList();
         }
 
-        public static void PopulateEntries
+        public void PopulateEntries
             ( ExcelApplication app
             , string path
             , string sheetName
@@ -209,6 +220,7 @@ namespace DocGen.Processor
                     cell.Value = location;
                     SetStyle_LocationCell(cell);
                 }
+                double progressPercent = 45;
                 foreach (var entry in entries)
                 {
                     colIndex = 1;
@@ -225,6 +237,8 @@ namespace DocGen.Processor
                             workSheet.Cells[rowIndex, colIndex] = intervalsFormat;
                         }
                     }
+                    progressPercent += 0.2;
+                    ProgressUpdated(progressPercent);
                 }
                 workSheet.Columns.AutoFit();
                 workSheet.Rows.AutoFit();
