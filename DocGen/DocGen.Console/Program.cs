@@ -20,7 +20,13 @@ namespace DocGen.Console
         {
             //ProcessExcelBRs();
             //ProcessExcelEntries(populate: true);
-            ProcessWord();
+            //ProcessWord();
+
+            var excelProcessor = new ExcelProcessor()
+            {
+                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy.xlsm",
+            };
+            excelProcessor.ProcessDB();
         }
 
         private static List<BR> ProcessExcelBRs()

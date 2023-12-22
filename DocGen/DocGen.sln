@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocGen.Processor", "DocGen.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocGen.Desktop", "DocGen.Desktop\DocGen.Desktop.csproj", "{330CEC81-EAFA-4A51-957E-ACDF9838ED02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocGen.Data", "DocGen.Data\DocGen.Data.csproj", "{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{330CEC81-EAFA-4A51-957E-ACDF9838ED02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{330CEC81-EAFA-4A51-957E-ACDF9838ED02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{330CEC81-EAFA-4A51-957E-ACDF9838ED02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

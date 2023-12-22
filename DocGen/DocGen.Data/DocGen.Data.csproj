@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D906DF05-DB09-4449-BA4C-CAFA1C466751}</ProjectGuid>
+    <ProjectGuid>{0F6CA8FB-88A1-4F0A-A03D-7648187D16F4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DocGen.Processor</RootNamespace>
-    <AssemblyName>DocGen.Processor</AssemblyName>
+    <RootNamespace>DocGen.Data</RootNamespace>
+    <AssemblyName>DocGen.Data</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,12 +34,8 @@
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,16 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entry.cs" />
-    <Compile Include="WordProcessor.cs" />
-    <Compile Include="ExcelProcessor.cs" />
+    <Compile Include="Model\Location.cs" />
+    <Compile Include="Model\DateTimeInterval.cs" />
+    <Compile Include="Model\Zone.cs" />
+    <Compile Include="Model\Order.cs" />
+    <Compile Include="Model\Person.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DocGen.Data\DocGen.Data.csproj">
-      <Project>{0f6ca8fb-88a1-4f0a-a03d-7648187d16f4}</Project>
-      <Name>DocGen.Data</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

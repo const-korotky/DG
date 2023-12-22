@@ -11,3 +11,5 @@ examples
 /DocGen/DocGen.Processor/.vs
 /DocGen/DocGen.Desktop/bin
 /DocGen/DocGen.Desktop/obj
+/DocGen/DocGen.Data/obj
+/DocGen/DocGen.Data/bin

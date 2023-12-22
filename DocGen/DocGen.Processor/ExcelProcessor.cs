@@ -5,8 +5,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using DocGen.Data;
 using Microsoft.Office.Interop.Excel;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 
@@ -87,6 +89,29 @@ namespace DocGen.Processor
             Marshal.FinalReleaseComObject(app);
             ProgressUpdated(68, "завантаження та обробку даних завершено");
         }
+
+
+
+        public void ProcessDB()
+        {
+            ExcelApplication app = new ExcelApplication();
+            Workbook workbook = app.Workbooks.Open(SourceDataFilePath);
+
+            Datastore db = new Datastore();
+            db.Load(workbook);
+
+            Print(workbook, db);
+
+            workbook.Close(true);
+            app.Quit();
+            Marshal.FinalReleaseComObject(workbook);
+            Marshal.FinalReleaseComObject(app);
+        }
+        public void Print(Workbook workbook, Datastore db)
+        {
+
+        }
+
 
 
         public static List<BR> ExtractBRs
