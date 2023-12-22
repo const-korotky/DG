@@ -15,7 +15,7 @@ namespace DocGen.Data.Model
 
         public override string ToString()
         {
-            return $"Location [Name: {Name}][Color: {Color}]";
+            return $"Location [Name: {Name}][Color: {Color}][FontColor: {FontColor}]";
         }
     }
 }

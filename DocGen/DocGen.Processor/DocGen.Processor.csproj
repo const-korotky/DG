@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entry.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="_ExcelProcessor.cs" />
     <Compile Include="WordProcessor.cs" />
     <Compile Include="ExcelProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

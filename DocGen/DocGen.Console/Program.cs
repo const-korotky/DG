@@ -22,12 +22,14 @@ namespace DocGen.Console
             //ProcessExcelEntries(populate: true);
             //ProcessWord();
 
-            var excelProcessor = new ExcelProcessor()
+            DateTime startDate = new DateTime(2023, 8, 1);
+            DateTime endDate = startDate.AddMonths(1);
+
+            var excelProcessor = new _ExcelProcessor()
             {
-                //SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy.xlsm",
-                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy (2).xlsm",
+                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db.xlsm",
             };
-            excelProcessor.ProcessDB();
+            excelProcessor.Process(startDate, endDate, PrintOption.Location|PrintOption.Order);
         }
 
         private static List<BR> ProcessExcelBRs()

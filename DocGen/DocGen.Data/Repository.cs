@@ -155,8 +155,8 @@ namespace DocGen.Data
                 {
                     StartDate = start.Value,
                     EndDate = end.Value,
-                    Note = cells[5].Value,
-                    Description = cells[6].Value,
+                    Note = TrimDataString(cells[5].Value),
+                    Description = TrimDataString(cells[6].Value),
                 };
                 interval.EndDate.AddDays(1);
 
@@ -197,7 +197,7 @@ namespace DocGen.Data
 
         public static string TrimDataString(string data)
         {
-            return string.IsNullOrEmpty(data) ? string.Empty : data.Trim();
+            return (string.IsNullOrWhiteSpace(data) ? string.Empty : data.Trim());
         }
     }
 }
