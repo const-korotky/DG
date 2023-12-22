@@ -13,12 +13,12 @@ namespace DocGen.Data.Model
         public string Company { get; set; }
 
         public readonly List<DateTimeInterval> Sector;
-        public readonly List<DateTimeInterval> Absent;
+        public readonly List<DateTimeInterval> Inactive;
 
         public Person()
         {
             Sector = new List<DateTimeInterval>();
-            Absent = new List<DateTimeInterval>();
+            Inactive = new List<DateTimeInterval>();
         }
 
         public override string ToString()

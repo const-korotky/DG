@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using DocGen.Data;
+using DocGen.Data.Model;
 using Microsoft.Office.Interop.Excel;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 
@@ -97,19 +98,95 @@ namespace DocGen.Processor
             ExcelApplication app = new ExcelApplication();
             Workbook workbook = app.Workbooks.Open(SourceDataFilePath);
 
-            Datastore db = new Datastore();
-            db.Load(workbook);
+            try
+            {
+                Datastore db = new Datastore();
+                db.Load(workbook);
+                Print(workbook, db);
+                workbook.SaveAs(Filename: $"D:\\MSC\\DG\\examples.copy\\Excel_res{DateTime.Now.Ticks}.xlsm");
+                workbook.Close(SaveChanges: false);
+                app.Quit();
+            }
+            catch
+            {
+            }
 
-            Print(workbook, db);
-
-            workbook.Close(true);
-            app.Quit();
             Marshal.FinalReleaseComObject(workbook);
             Marshal.FinalReleaseComObject(app);
         }
         public void Print(Workbook workbook, Datastore db)
         {
+            Worksheet worksheet = workbook.Sheets.Add(After: workbook.Sheets[workbook.Sheets.Count]);
+            worksheet.Name = "Звіт по локаціях";
 
+            var rowIndex = 1;
+            var colIndex = 1;
+            Range cell;
+
+            cell = worksheet.Cells[rowIndex, colIndex];
+            cell.Value = "ФИО";
+            cell.Font.Bold = true;
+            cell.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+
+            var currDate = new DateTime(2023, 8, 1);
+            var endDate = currDate.AddMonths(1);
+            while (currDate < endDate)
+            {
+                cell = worksheet.Cells[rowIndex, ++colIndex];
+                cell.Value = currDate.ToString(format: "d-MMM");
+                currDate = currDate.AddDays(1);
+            }
+
+            foreach(var person in db.Person)
+            {
+                colIndex = 1;
+                cell = worksheet.Cells[++rowIndex, colIndex];
+                cell.Value = person.Name;
+                if ((person.Name == "ALL (КП)") || person.Name == "ALL (ТКП)")
+                {
+                    cell.Font.Bold = true;
+                    cell.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                    continue;
+                }
+
+                currDate = new DateTime(2023, 8, 1);
+                while (currDate < endDate)
+                {
+                    cell = worksheet.Cells[rowIndex, ++colIndex];
+
+                    var interval = person.Inactive.FirstOrDefault(i => (i.StartDate <= currDate) && (currDate <= i.EndDate));
+                    if (interval != null)
+                    {
+                        cell.Interior.Pattern = XlPattern.xlPatternDown;
+                    }
+                    else
+                    {
+                        interval = GetSectorInterval(currDate, person);
+                        if ((interval != null) && (interval.Location != null))
+                        {
+                            cell.Value = interval.Location.Name;
+                            cell.Interior.Color = interval.Location.Color;
+                            cell.Font.ColorIndex = interval.Location.FontColor;
+                        }
+                    }
+                    currDate = currDate.AddDays(1);
+                }
+                Console.WriteLine(person);
+            }
+
+            worksheet.Columns.AutoFit();
+            worksheet.Rows.AutoFit();
+        }
+        private static DateTimeInterval GetSectorInterval(DateTime date, Person person)
+        {
+            var intervals =
+                person.Sector
+                .Where(i => (i.StartDate <= date) && (date <= i.EndDate))
+                .OrderBy(i => i.StartDate)
+                .ThenBy(i => i.Zone?.Value)
+                .ToList()
+                ;
+            return ((intervals.Count > 0) ? intervals.Last() : null);
         }
 
 

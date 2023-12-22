@@ -31,8 +31,8 @@ namespace DocGen.Data
             LoadLocation(GetTable(workbook, "ЛОКАЦІЯ", "LOCATION"));
             LoadZone(GetTable(workbook, "ЛОКАЦІЯ", "ZONE"));
             LoadOrder(GetTable(workbook, "НАКАЗ", "ORDER"));
-            LoadAbsent(GetTable(workbook, "НЕ В СЕКТОРІ", "ABSENT"));
-            LoadSector(GetTable(workbook, "СЕКТОР", "SEKTOR"));
+            LoadInactive(GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE"));
+            LoadSector(GetTable(workbook, "СЕКТОР", "SECTOR"));
         }
 
         public static Range GetTable(Workbook workbook, string schemeName, string tableName)
@@ -64,6 +64,7 @@ namespace DocGen.Data
                 {
                     Name = TrimDataString(cells[0].Value),
                     Color = cells[1].Interior.Color,
+                    FontColor = cells[1].Font.ColorIndex,
                 };
                 Location.Add(location);
                 Console.WriteLine(location);
@@ -77,7 +78,9 @@ namespace DocGen.Data
                 var zone = new Zone
                 {
                     Name = TrimDataString(cells[0].Value),
-                    Color = cells[1].Interior.Color,
+                    Value = (cells[1].Value ?? 0),
+                    Color = cells[2].Interior.Color,
+                    FontColor = cells[2].Font.ColorIndex,
                 };
                 Zone.Add(zone);
                 Console.WriteLine(zone);
@@ -93,13 +96,14 @@ namespace DocGen.Data
                     Name = TrimDataString(cells[0].Value),
                     Description = TrimDataString(cells[1].Value),
                     Color = cells[2].Interior.Color,
+                    FontColor = cells[2].Font.ColorIndex,
                 };
                 Order.Add(order);
                 Console.WriteLine(order);
             }
         }
 
-        public void LoadAbsent(Range table)
+        public void LoadInactive(Range table)
         {
             foreach (Range row in table.Rows)
             {
@@ -117,16 +121,16 @@ namespace DocGen.Data
                 }
                 var interval = new DateTimeInterval
                 {
-                    Start = start.Value,
-                    End = end.Value,
+                    StartDate = start.Value,
+                    EndDate = end.Value,
                 };
-                interval.End.AddDays(1);
+                interval.EndDate.AddDays(1);
 
                 var name = TrimDataString(cells[0].Value);
                 var person = Person.FirstOrDefault(i => i.Name == name);
                 if (person != null)
                 {
-                    person.Absent.Add(interval);
+                    person.Inactive.Add(interval);
                 }
                 Console.WriteLine($"{person} {interval}");
             }
@@ -149,12 +153,12 @@ namespace DocGen.Data
                 }
                 var interval = new DateTimeInterval
                 {
-                    Start = start.Value,
-                    End = end.Value,
+                    StartDate = start.Value,
+                    EndDate = end.Value,
                     Note = cells[5].Value,
                     Description = cells[6].Value,
                 };
-                interval.End.AddDays(1);
+                interval.EndDate.AddDays(1);
 
                 var orderName = TrimDataString(cells[0].Value);
                 var order = Order.FirstOrDefault(i => i.Name == orderName);

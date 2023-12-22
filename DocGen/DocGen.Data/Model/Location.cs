@@ -9,7 +9,9 @@ namespace DocGen.Data.Model
     public class Location
     {
         public string Name { get; set; }
+
         public double Color { get; set; }
+        public double FontColor { get; set; }
 
         public override string ToString()
         {

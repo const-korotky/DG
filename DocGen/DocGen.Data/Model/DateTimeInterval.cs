@@ -15,14 +15,14 @@ namespace DocGen.Data.Model
         public string Note { get; set; }
         public string Description { get; set; }
 
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
-        public int Days => (End - Start).Days;
+        public int Days => (EndDate - StartDate).Days;
 
         public override string ToString()
         {
-            return $"DateTimeInterval [Start: {Start}][End: {End}][{Order}][{Location}][{Zone}][Note: {Note}][Description: {Description}]";
+            return $"DateTimeInterval [Start: {StartDate}][End: {EndDate}][{Order}][{Location}][{Zone}][Note: {Note}][Description: {Description}]";
         }
     }
 }

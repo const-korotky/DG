@@ -24,7 +24,8 @@ namespace DocGen.Console
 
             var excelProcessor = new ExcelProcessor()
             {
-                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy.xlsm",
+                //SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy.xlsm",
+                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db - Copy (2).xlsm",
             };
             excelProcessor.ProcessDB();
         }
