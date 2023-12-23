@@ -107,6 +107,7 @@ namespace DocGen.Data
 
         public void LoadInactive(Range table)
         {
+            Entity.ResetID(@base: 1000);
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
@@ -141,6 +142,7 @@ namespace DocGen.Data
         }
         public void LoadSector(Range table)
         {
+            Entity.ResetID();
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();

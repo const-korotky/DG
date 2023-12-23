@@ -165,7 +165,7 @@ namespace DocGen.Processor
                 rowIndex += 1;
             }
             Datastore.IsNormalized = true;
-            PrintFooter(worksheet, rowIndex, targetPrintOption);
+            PrintFooter(worksheet);
         }
 
         private static string GetWorksheetName(PrintOption printOption)
@@ -222,7 +222,7 @@ namespace DocGen.Processor
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
-                cell.AddComment(FormatComment(interval));
+                AddComment(cell, interval);
                 person.Normalize(interval, date);
                 return true;
             }
@@ -237,7 +237,7 @@ namespace DocGen.Processor
                 return;
             }
             cell.Value = interval.Location?.Name;
-            cell.AddComment(FormatComment(interval));
+            AddComment(cell, interval);
             if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
             {
                 cell.Interior.Color = color;
@@ -255,39 +255,57 @@ namespace DocGen.Processor
             if (interval.IsInactive)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
-                cell.AddComment(FormatComment(interval));
+                AddComment(cell, interval);
             }
             else
             {
                 cell.Value = interval.Location?.Name;
+                AddComment(cell, interval);
                 if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
                 {
                     cell.Interior.Color = color;
                     cell.Font.ColorIndex = fontColor;
                 }
-                cell.AddComment(FormatComment(interval));
             }
         }
 
+        private static void AddComment(Range cell, DateTimeInterval interval)
+        {
+            int row = (interval.ID + 1);
+            if(interval.IsInactive)
+            {
+                row -= 1000;
+                cell.Worksheet.Hyperlinks.Add(cell, $"#НЕЗАДІЯНІ!A{row}:D{row}", TextToDisplay: "______");
+                cell.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+            }
+            else
+            {
+                cell.Worksheet.Hyperlinks.Add(cell, $"#СЕКТОР!A{row}:H{row}");
+            }
+            cell.AddComment(FormatComment(interval));
+        }
         private static string FormatComment(DateTimeInterval interval)
         {
-            var description = interval.Description;
+            var descr = interval.Description;
+            var descrIsEmpty = string.IsNullOrWhiteSpace(descr);
+
             if (interval.IsInactive || (interval.Order == null))
             {
-                return description;
+                return (!descrIsEmpty ? descr : "N/A");
             }
-            if (string.IsNullOrWhiteSpace(description))
+            if (descrIsEmpty)
             {
-                description = interval.Order.Description;
+                descr = interval.Order.Description;
+                descrIsEmpty = string.IsNullOrWhiteSpace(descr);
             }
-            if (!string.IsNullOrWhiteSpace(description))
+            if (!descrIsEmpty)
             {
-                description = $" - {description}";
+                descr = $" - {descr}";
             }
-            return $"{interval.Order.Name}{description}";
+            return $"{interval.Order.Name}{descr}";
         }
 
-        private static void PrintFooter(Worksheet worksheet, int rowIndex, PrintOption printOption)
+        private static void PrintFooter(Worksheet worksheet)
         {
             var leftCornerCell = worksheet.Cells[1, 1];
             var nextRowCell = worksheet.Cells[2, 1];
