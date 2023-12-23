@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -17,8 +18,6 @@ using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 
 namespace DocGen.Processor
 {
-
-
     public class _ExcelProcessor
     {
         #region Properties and Fields
@@ -147,9 +146,16 @@ namespace DocGen.Processor
                     while (currDate < endDate)
                     {
                         cell = worksheet.Cells[rowIndex, ++colIndex];
-                        if (!IsInactiveDate(cell, person, currDate))
+                        if (Datastore.IsNormalized)
                         {
-                            PrintSectorDate(cell, person, currDate, targetPrintOption);
+                            PrintNormalizedDate(cell, person, currDate, targetPrintOption);
+                        }
+                        else
+                        {
+                            if (!IsInactiveDate(cell, person, currDate))
+                            {
+                                PrintSectorDate(cell, person, currDate, targetPrintOption);
+                            }
                         }
                         currDate = currDate.AddDays(1);
                     }
@@ -159,6 +165,7 @@ namespace DocGen.Processor
                 rowIndex += 1;
             }
 
+            Datastore.IsNormalized = true;
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
         }
@@ -215,20 +222,40 @@ namespace DocGen.Processor
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
+                person.Normalize(interval);
                 return true;
             }
             return false;
         }
         private static void PrintSectorDate(Range cell, Person person, DateTime date, PrintOption option)
         {
-            double color;
-            double fontColor;
             var interval = GetSectorInterval(person, date);
-            if (GetIntervalPrintOptionData(interval, option, out color, out fontColor))
+            if (interval != null)
             {
-                cell.Value = interval.Location?.Name;
-                cell.Interior.Color = color;
-                cell.Font.ColorIndex = fontColor;
+                if (GetIntervalPrintOptionData(interval, option, out string name, out double color, out double fontColor))
+                {
+                    cell.Value = interval.Location?.Name;
+                    cell.Interior.Color = color;
+                    cell.Font.ColorIndex = fontColor;
+                }
+                person.Normalize(interval);
+            }
+        }
+        private static void PrintNormalizedDate(Range cell, Person person, DateTime date, PrintOption option)
+        {
+            var interval = person.Normalized.FirstOrDefault(i => (i.StartDate <= date) && (date <= i.EndDate));
+            if (interval != null)
+            {
+                if (interval.IsInactive)
+                {
+                    cell.Interior.Pattern = XlPattern.xlPatternDown;
+                }
+                else if (GetIntervalPrintOptionData(interval, option, out string name, out double color, out double fontColor))
+                {
+                    cell.Value = interval.Location?.Name;
+                    cell.Interior.Color = color;
+                    cell.Font.ColorIndex = fontColor;
+                }
             }
         }
 
@@ -246,21 +273,20 @@ namespace DocGen.Processor
         private static bool GetIntervalPrintOptionData
             ( DateTimeInterval interval
             , PrintOption option
+            , out string name
             , out double color
             , out double fontColor 
             ) {
+            name = null;
             color = 0;
             fontColor = 0;
-            if (interval == null)
-            {
-                return false;
-            }
             switch (option)
             {
                 case PrintOption.Order:
                 {
                     if (interval.Order != null)
                     {
+                        name = interval.Order.Name;
                         color = interval.Order.Color;
                         fontColor = interval.Order.FontColor;
                         return true;
@@ -271,6 +297,7 @@ namespace DocGen.Processor
                 {
                     if (interval.Location != null)
                     {
+                        name = interval.Location.Name;
                         color = interval.Location.Color;
                         fontColor = interval.Location.FontColor;
                         return true;
@@ -281,6 +308,7 @@ namespace DocGen.Processor
                 {
                     if (interval.Zone != null)
                     {
+                        name = interval.Zone.Name;
                         color = interval.Zone.Color;
                         fontColor = interval.Zone.FontColor;
                         return true;

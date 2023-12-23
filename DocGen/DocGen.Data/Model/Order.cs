@@ -14,6 +14,8 @@ namespace DocGen.Data.Model
         public double Color { get; set; }
         public double FontColor { get; set; }
 
+        public Order() : base() { }
+
         public override string ToString()
         {
             return $"Order [Name: {Name}][Description: {Description}][Color: {Color}][FontColor: {FontColor}]";

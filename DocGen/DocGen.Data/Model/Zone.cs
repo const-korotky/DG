@@ -14,6 +14,8 @@ namespace DocGen.Data.Model
         public double Color { get; set; }
         public double FontColor { get; set; }
 
+        public Zone() : base() { }
+
         public override string ToString()
         {
             return $"Zone [Name: {Name}][Color: {Color}][FontColor: {FontColor}]";

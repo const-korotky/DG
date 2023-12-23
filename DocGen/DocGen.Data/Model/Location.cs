@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace DocGen.Data.Model
 {
-    public class Location
+    public class Location : Entity
     {
         public string Name { get; set; }
 
         public double Color { get; set; }
         public double FontColor { get; set; }
+
+        public Location() : base() { }
 
         public override string ToString()
         {

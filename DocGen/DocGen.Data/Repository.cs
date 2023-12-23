@@ -12,6 +12,8 @@ namespace DocGen.Data
 {
     public class Datastore
     {
+        public bool IsNormalized { get; set; }
+
         public readonly List<Person> Person;
         public readonly List<Location> Location;
         public readonly List<Zone> Zone;
@@ -123,6 +125,7 @@ namespace DocGen.Data
                 {
                     StartDate = start.Value,
                     EndDate = end.Value,
+                    IsInactive = true,
                 };
                 interval.EndDate.AddDays(1);
 

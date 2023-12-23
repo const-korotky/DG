@@ -24,12 +24,13 @@ namespace DocGen.Console
 
             DateTime startDate = new DateTime(2023, 8, 1);
             DateTime endDate = startDate.AddMonths(1);
+            PrintOption printOptions = (PrintOption.Order|PrintOption.Location|PrintOption.Zone);
 
             var excelProcessor = new _ExcelProcessor()
             {
                 SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db.xlsm",
             };
-            excelProcessor.Process(startDate, endDate, PrintOption.Location|PrintOption.Order);
+            excelProcessor.Process(startDate, endDate, printOptions);
         }
 
         private static List<BR> ProcessExcelBRs()
