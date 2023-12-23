@@ -164,11 +164,8 @@ namespace DocGen.Processor
                 colIndex = 1;
                 rowIndex += 1;
             }
-            PrintFooter(worksheet, rowIndex, targetPrintOption);
-
             Datastore.IsNormalized = true;
-            worksheet.Columns.AutoFit();
-            worksheet.Rows.AutoFit();
+            PrintFooter(worksheet, rowIndex, targetPrintOption);
         }
 
         private static string GetWorksheetName(PrintOption printOption)
@@ -188,6 +185,7 @@ namespace DocGen.Processor
             worksheet.Name = worksheetName;
             return worksheet;
         }
+
         private static void PrintHeader(Worksheet worksheet, DateTime startDate, DateTime endDate)
         {
             var colIndex = 1;
@@ -206,6 +204,7 @@ namespace DocGen.Processor
                 currDate = currDate.AddDays(1);
             }
         }
+
         private static bool IsCompanyHeader(Range cell)
         {
             var name = cell.Value;
@@ -223,48 +222,80 @@ namespace DocGen.Processor
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
+                cell.AddComment(FormatComment(interval));
                 person.Normalize(interval, date);
                 return true;
             }
             return false;
         }
+
         private static void PrintSectorDate(Range cell, Person person, DateTime date, PrintOption printOption)
         {
             var interval = SelectDateTimeInterval(person.Sector, date);
-            if (interval != null)
+            if (interval == null)
             {
-                cell.Value = interval.Location?.Name;
-                if (GetIntervalPrintOptionData(interval, printOption, out string name, out double color, out double fontColor))
-                {
-                    cell.Interior.Color = color;
-                    cell.Font.ColorIndex = fontColor;
-                }
-                person.Normalize(interval, date);
+                return;
             }
+            cell.Value = interval.Location?.Name;
+            cell.AddComment(FormatComment(interval));
+            if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
+            {
+                cell.Interior.Color = color;
+                cell.Font.ColorIndex = fontColor;
+            }
+            person.Normalize(interval, date);
         }
         private static void PrintNormalizedDate(Range cell, Person person, DateTime date, PrintOption printOption)
         {
             var interval = SelectDateTimeInterval(person.Normalized, date);
-            if (interval != null)
+            if (interval == null)
             {
-                if (interval.IsInactive)
+                return;
+            }
+            if (interval.IsInactive)
+            {
+                cell.Interior.Pattern = XlPattern.xlPatternDown;
+                cell.AddComment(FormatComment(interval));
+            }
+            else
+            {
+                cell.Value = interval.Location?.Name;
+                if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
                 {
-                    cell.Interior.Pattern = XlPattern.xlPatternDown;
+                    cell.Interior.Color = color;
+                    cell.Font.ColorIndex = fontColor;
                 }
-                else
-                {
-                    cell.Value = interval.Location?.Name;
-                    if (GetIntervalPrintOptionData(interval, printOption, out string name, out double color, out double fontColor))
-                    {
-                        cell.Interior.Color = color;
-                        cell.Font.ColorIndex = fontColor;
-                    }
-                }
+                cell.AddComment(FormatComment(interval));
             }
         }
+
+        private static string FormatComment(DateTimeInterval interval)
+        {
+            var description = interval.Description;
+            if (interval.IsInactive || (interval.Order == null))
+            {
+                return description;
+            }
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                description = interval.Order.Description;
+            }
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                description = $" - {description}";
+            }
+            return $"{interval.Order.Name}{description}";
+        }
+
         private static void PrintFooter(Worksheet worksheet, int rowIndex, PrintOption printOption)
         {
-            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[2, 1]].AutoFilter();
+            var leftCornerCell = worksheet.Cells[1, 1];
+            var nextRowCell = worksheet.Cells[2, 1];
+            // add filter onto the first column;
+            worksheet.Range[leftCornerCell, nextRowCell].AutoFilter();
+
+            worksheet.Columns.AutoFit();
+            worksheet.Rows.AutoFit();
         }
 
         private static DateTimeInterval SelectDateTimeInterval(IEnumerable<DateTimeInterval> intervals, DateTime date)
@@ -281,11 +312,9 @@ namespace DocGen.Processor
         private static bool GetIntervalPrintOptionData
             ( DateTimeInterval interval
             , PrintOption printOption
-            , out string name
             , out double color
             , out double fontColor 
             ) {
-            name = null;
             color = 0;
             fontColor = 0;
             switch (printOption)
@@ -294,7 +323,6 @@ namespace DocGen.Processor
                 {
                     if (interval.Order != null)
                     {
-                        name = interval.Order.Name;
                         color = interval.Order.Color;
                         fontColor = interval.Order.FontColor;
                         return true;
@@ -305,7 +333,6 @@ namespace DocGen.Processor
                 {
                     if (interval.Location != null)
                     {
-                        name = interval.Location.Name;
                         color = interval.Location.Color;
                         fontColor = interval.Location.FontColor;
                         return true;
@@ -316,7 +343,6 @@ namespace DocGen.Processor
                 {
                     if (interval.Zone != null)
                     {
-                        name = interval.Zone.Name;
                         color = interval.Zone.Color;
                         fontColor = interval.Zone.FontColor;
                         return true;

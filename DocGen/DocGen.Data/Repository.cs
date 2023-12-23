@@ -126,6 +126,7 @@ namespace DocGen.Data
                     StartDate = start.Value,
                     EndDate = end.Value,
                     IsInactive = true,
+                    Description = TrimDataString(cells[3].Value),
                 };
                 interval.EndDate.AddDays(1);
 
@@ -158,8 +159,8 @@ namespace DocGen.Data
                 {
                     StartDate = start.Value,
                     EndDate = end.Value,
-                    Note = TrimDataString(cells[5].Value),
-                    Description = TrimDataString(cells[6].Value),
+                    Description = TrimDataString(cells[5].Value),
+                    Note = TrimDataString(cells[6].Value),
                 };
                 interval.EndDate.AddDays(1);
 
