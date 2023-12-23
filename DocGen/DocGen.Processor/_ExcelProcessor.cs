@@ -164,7 +164,7 @@ namespace DocGen.Processor
                 colIndex = 1;
                 rowIndex += 1;
             }
-            PrintFooter(targetPrintOption);
+            PrintFooter(worksheet, rowIndex, targetPrintOption);
 
             Datastore.IsNormalized = true;
             worksheet.Columns.AutoFit();
@@ -262,9 +262,9 @@ namespace DocGen.Processor
                 }
             }
         }
-        private static void PrintFooter(PrintOption printOption)
+        private static void PrintFooter(Worksheet worksheet, int rowIndex, PrintOption printOption)
         {
-            
+            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[2, 1]].AutoFilter();
         }
 
         private static DateTimeInterval SelectDateTimeInterval(IEnumerable<DateTimeInterval> intervals, DateTime date)
