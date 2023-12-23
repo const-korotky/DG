@@ -135,7 +135,7 @@ namespace DocGen.Processor
             int rowIndex = 2;
             int colIndex = 1;
             Range cell;
-            
+
             foreach (var person in Datastore.Person)
             {
                 cell = worksheet.Cells[rowIndex, colIndex];
@@ -164,15 +164,16 @@ namespace DocGen.Processor
                 colIndex = 1;
                 rowIndex += 1;
             }
+            PrintFooter(targetPrintOption);
 
             Datastore.IsNormalized = true;
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
         }
 
-        private static string GetWorksheetName(PrintOption option)
+        private static string GetWorksheetName(PrintOption printOption)
         {
-            switch (option)
+            switch (printOption)
             {
                 case PrintOption.Order:    return "Звіт по Наказам";
                 case PrintOption.Location: return "Звіт по Локаціях";
@@ -222,57 +223,64 @@ namespace DocGen.Processor
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
-                person.Normalize(interval);
+                person.Normalize(interval, date);
                 return true;
             }
             return false;
         }
-        private static void PrintSectorDate(Range cell, Person person, DateTime date, PrintOption option)
+        private static void PrintSectorDate(Range cell, Person person, DateTime date, PrintOption printOption)
         {
-            var interval = GetSectorInterval(person, date);
+            var interval = SelectDateTimeInterval(person.Sector, date);
             if (interval != null)
             {
-                if (GetIntervalPrintOptionData(interval, option, out string name, out double color, out double fontColor))
+                cell.Value = interval.Location?.Name;
+                if (GetIntervalPrintOptionData(interval, printOption, out string name, out double color, out double fontColor))
                 {
-                    cell.Value = interval.Location?.Name;
                     cell.Interior.Color = color;
                     cell.Font.ColorIndex = fontColor;
                 }
-                person.Normalize(interval);
+                person.Normalize(interval, date);
             }
         }
-        private static void PrintNormalizedDate(Range cell, Person person, DateTime date, PrintOption option)
+        private static void PrintNormalizedDate(Range cell, Person person, DateTime date, PrintOption printOption)
         {
-            var interval = person.Normalized.FirstOrDefault(i => (i.StartDate <= date) && (date <= i.EndDate));
+            var interval = SelectDateTimeInterval(person.Normalized, date);
             if (interval != null)
             {
                 if (interval.IsInactive)
                 {
                     cell.Interior.Pattern = XlPattern.xlPatternDown;
                 }
-                else if (GetIntervalPrintOptionData(interval, option, out string name, out double color, out double fontColor))
+                else
                 {
                     cell.Value = interval.Location?.Name;
-                    cell.Interior.Color = color;
-                    cell.Font.ColorIndex = fontColor;
+                    if (GetIntervalPrintOptionData(interval, printOption, out string name, out double color, out double fontColor))
+                    {
+                        cell.Interior.Color = color;
+                        cell.Font.ColorIndex = fontColor;
+                    }
                 }
             }
         }
-
-        private static DateTimeInterval GetSectorInterval(Person person, DateTime date)
+        private static void PrintFooter(PrintOption printOption)
         {
-            var intervals =
-                person.Sector
+            
+        }
+
+        private static DateTimeInterval SelectDateTimeInterval(IEnumerable<DateTimeInterval> intervals, DateTime date)
+        {
+            var select =
+                intervals
                 .Where(i => (i.StartDate <= date) && (date <= i.EndDate))
                 .OrderBy(i => i.StartDate)
                 .ThenBy(i => i.Zone?.Value)
                 .ToList()
                 ;
-            return ((intervals.Count > 0) ? intervals.Last() : null);
+            return ((select.Count > 0) ? select.Last() : null);
         }
         private static bool GetIntervalPrintOptionData
             ( DateTimeInterval interval
-            , PrintOption option
+            , PrintOption printOption
             , out string name
             , out double color
             , out double fontColor 
@@ -280,7 +288,7 @@ namespace DocGen.Processor
             name = null;
             color = 0;
             fontColor = 0;
-            switch (option)
+            switch (printOption)
             {
                 case PrintOption.Order:
                 {

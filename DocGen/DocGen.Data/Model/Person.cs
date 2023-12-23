@@ -23,18 +23,18 @@ namespace DocGen.Data.Model
             Normalized = new List<DateTimeInterval>();
         }
 
-        public void Normalize(DateTimeInterval interval)
+        public void Normalize(DateTimeInterval interval, DateTime date)
         {
             if (Normalized.Count < 1)
             {
-                NormalizeAddNew(interval);
+                NormalizeAddNew(interval, null);
             }
             else
             {
-                NormalizeAddNext(interval);
+                NormalizeAddNext(interval, date);
             }
         }
-        protected void NormalizeAddNew(DateTimeInterval interval)
+        protected void NormalizeAddNew(DateTimeInterval interval, DateTime? date)
         {
             Normalized.Add(
                 new DateTimeInterval {
@@ -45,20 +45,20 @@ namespace DocGen.Data.Model
                     Note = interval.Note,
                     Description = interval.Description,
                     IsInactive = interval.IsInactive,
-                    StartDate = interval.StartDate,
+                    StartDate = (date ?? interval.StartDate),
                     EndDate = interval.EndDate,
             });
         }
-        protected void NormalizeAddNext(DateTimeInterval interval)
+        protected void NormalizeAddNext(DateTimeInterval interval, DateTime date)
         {
             var current = Normalized.Last();
             if (current.ID != interval.ID)
             {
                 if (interval.StartDate < current.EndDate)
                 {
-                    current.EndDate = interval.StartDate;
+                    current.EndDate = date;
                 }
-                NormalizeAddNew(interval);
+                NormalizeAddNew(interval, date);
             }
         }
 
