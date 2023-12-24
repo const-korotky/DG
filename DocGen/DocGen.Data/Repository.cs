@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using DocGen.Data.Model;
 using Microsoft.Office.Interop.Excel;
 
@@ -65,8 +61,9 @@ namespace DocGen.Data
                 var location = new Location
                 {
                     Name = TrimDataString(cells[0].Value),
-                    Color = cells[1].Interior.Color,
-                    FontColor = cells[1].Font.ColorIndex,
+                    Description = TrimDataString(cells[1].Value),
+                    Color = cells[2].Interior.Color,
+                    FontColor = cells[2].Font.ColorIndex,
                 };
                 Location.Add(location);
                 Console.WriteLine(location);
@@ -97,8 +94,9 @@ namespace DocGen.Data
                 {
                     Name = TrimDataString(cells[0].Value),
                     Description = TrimDataString(cells[1].Value),
-                    Color = cells[2].Interior.Color,
-                    FontColor = cells[2].Font.ColorIndex,
+                    CodeName = TrimDataString(cells[2].Value),
+                    Color = cells[3].Interior.Color,
+                    FontColor = cells[3].Font.ColorIndex,
                 };
                 Order.Add(order);
                 Console.WriteLine(order);
@@ -174,7 +172,7 @@ namespace DocGen.Data
                 }
 
                 var locationName = TrimDataString(cells[4].Value);
-                var location = Location.FirstOrDefault(i => i.Name == locationName);
+                var location = Location.FirstOrDefault(i => i.Description == locationName);
                 if (location != null)
                 {
                     interval.Location = location;

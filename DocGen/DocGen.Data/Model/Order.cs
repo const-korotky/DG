@@ -10,6 +10,7 @@ namespace DocGen.Data.Model
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string CodeName { get; set; }
 
         public double Color { get; set; }
         public double FontColor { get; set; }

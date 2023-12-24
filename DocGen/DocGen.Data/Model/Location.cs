@@ -9,6 +9,7 @@ namespace DocGen.Data.Model
     public class Location : Entity
     {
         public string Name { get; set; }
+        public string Description { get; set; }
 
         public double Color { get; set; }
         public double FontColor { get; set; }

@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using DocGen.Data;
 using DocGen.Data.Model;
 using Microsoft.Office.Interop.Excel;
@@ -302,7 +295,7 @@ namespace DocGen.Processor
             {
                 descr = $" - {descr}";
             }
-            return $"{interval.Order.Name}{descr}";
+            return $"{interval.Location?.Description}: {interval.Order.Name}{descr}";
         }
 
         private static void PrintFooter(Worksheet worksheet)
