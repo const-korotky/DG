@@ -27,14 +27,14 @@ namespace DocGen.Data.Model
         {
             if (Normalized.Count < 1)
             {
-                NormalizeAddNew(interval, null);
+                NormalizeAddNew(interval);
             }
             else
             {
                 NormalizeAddNext(interval, date);
             }
         }
-        protected void NormalizeAddNew(DateTimeInterval interval, DateTime? date)
+        protected void NormalizeAddNew(DateTimeInterval interval, DateTime? date = null)
         {
             Normalized.Add(
                 new DateTimeInterval {

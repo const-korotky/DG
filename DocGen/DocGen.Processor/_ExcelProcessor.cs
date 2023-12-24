@@ -62,7 +62,7 @@ namespace DocGen.Processor
             Workbook workbook = excelApplication.Workbooks.Open(SourceDataFilePath);
             try
             {
-                Load(workbook);
+                Load(workbook, startDate, endDate);
                 Print(workbook, startDate, endDate, printOptions);
 
                 workbook.SaveAs(UpdateDestinationFilePath());
@@ -82,10 +82,10 @@ namespace DocGen.Processor
 
         public Datastore Datastore { get; protected set; }
 
-        public void Load(Workbook workbook)
+        public void Load(Workbook workbook, DateTime startDate, DateTime endDate)
         {
             Datastore = new Datastore();
-            Datastore.Load(workbook);
+            Datastore.Load(workbook, startDate, endDate);
         }
 
         #endregion Load Datastore
@@ -211,7 +211,7 @@ namespace DocGen.Processor
         }
         private static bool IsInactiveDate(Range cell, Person person, DateTime date)
         {
-            var interval = person.Inactive.FirstOrDefault(i => (i.StartDate <= date) && (date <= i.EndDate));
+            var interval = person.Inactive.FirstOrDefault(i => (i.StartDate <= date) && (date < i.EndDate));
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
@@ -229,7 +229,7 @@ namespace DocGen.Processor
             {
                 return;
             }
-            cell.Value = interval.Location?.Name;
+            cell.Value = interval.Location?.CodeName;
             AddComment(cell, interval);
             var select = SelectPrintOptionColor(interval, printOption);
             if (select != null)
@@ -253,7 +253,7 @@ namespace DocGen.Processor
             }
             else
             {
-                cell.Value = interval.Location?.Name;
+                cell.Value = interval.Location?.CodeName;
                 AddComment(cell, interval);
                 var select = SelectPrintOptionColor(interval, printOption);
                 if (select != null)
@@ -269,7 +269,7 @@ namespace DocGen.Processor
             int row = (interval.ID + 1);
             if(interval.IsInactive)
             {
-                row -= 1000;
+                row -= 10000;
                 cell.Worksheet.Hyperlinks.Add(cell, $"#НЕЗАДІЯНІ!A{row}:D{row}", TextToDisplay: "______");
                 cell.HorizontalAlignment = XlHAlign.xlHAlignCenter;
             }
@@ -297,25 +297,28 @@ namespace DocGen.Processor
             {
                 descr = $" - {descr}";
             }
-            return $"{interval.Location?.Description}: {interval.Order.Name}{descr}";
+            return $"{interval.Location?.Name}: {interval.Order.Name}{descr}";
         }
 
         private static void PrintFooter(Worksheet worksheet)
         {
             var leftCornerCell = worksheet.Cells[1, 1];
             var nextRowCell = worksheet.Cells[2, 1];
-            // add filter onto the first column;
             worksheet.Range[leftCornerCell, nextRowCell].AutoFilter();
 
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
+
+            worksheet.Application.ActiveWindow.SplitRow = 1;
+            worksheet.Application.ActiveWindow.SplitColumn = 1;
+            worksheet.Application.ActiveWindow.FreezePanes = true;
         }
 
         private static DateTimeInterval SelectDateTimeInterval(IEnumerable<DateTimeInterval> intervals, DateTime date)
         {
             var select =
                 intervals
-                .Where(i => (i.StartDate <= date) && (date <= i.EndDate))
+                .Where(i => (i.StartDate <= date) && (date < i.EndDate))
                 .OrderBy(i => i.StartDate)
                 .ThenBy(i => i.Zone?.Value)
                 .ToList()

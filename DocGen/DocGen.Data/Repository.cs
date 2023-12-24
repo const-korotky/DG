@@ -29,8 +29,8 @@ namespace DocGen.Data
             LoadLocation(GetTable(workbook, "ЛОКАЦІЯ", "LOCATION"));
             LoadZone(GetTable(workbook, "ЛОКАЦІЯ", "ZONE"));
             LoadOrder(GetTable(workbook, "НАКАЗ", "ORDER"));
-            LoadInactive(GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE"));
-            LoadSector(GetTable(workbook, "СЕКТОР", "SECTOR"));
+            LoadInactive(GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE"), startDate, endDate);
+            LoadSector(GetTable(workbook, "СЕКТОР", "SECTOR"), startDate, endDate);
         }
 
         public static Range GetTable(Workbook workbook, string schemeName, string tableName)
@@ -61,7 +61,7 @@ namespace DocGen.Data
                 var location = new Location
                 {
                     Name = TrimDataString(cells[0].Value),
-                    Description = TrimDataString(cells[1].Value),
+                    CodeName = TrimDataString(cells[1].Value),
                     Color = cells[2].Interior.Color,
                     FontColor = cells[2].Font.ColorIndex,
                 };
@@ -103,31 +103,20 @@ namespace DocGen.Data
             }
         }
 
-        public void LoadInactive(Range table)
+        public void LoadInactive(Range table, DateTime? startDate = null, DateTime? endDate = null)
         {
-            Entity.ResetID(@base: 1000);
+            Entity.ResetID(@base: 10000);
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
-                DateTime? start = cells[1].Value;
-                if (!start.HasValue)
+                var interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
+                if (interval == null)
                 {
                     continue;
                 }
-                DateTime? end = cells[2].Value;
-                if (!end.HasValue)
-                {
-                    end = DateTime.Today;
-                }
-                var interval = new DateTimeInterval
-                {
-                    StartDate = start.Value,
-                    EndDate = end.Value,
-                    IsInactive = true,
-                    Description = TrimDataString(cells[3].Value),
-                };
-                interval.EndDate.AddDays(1);
+                interval.IsInactive = true;
+                interval.Description = TrimDataString(cells[3].Value);
 
                 var name = TrimDataString(cells[0].Value);
                 var person = Person.FirstOrDefault(i => i.Name == name);
@@ -138,31 +127,20 @@ namespace DocGen.Data
                 Console.WriteLine($"{person} {interval}");
             }
         }
-        public void LoadSector(Range table)
+        public void LoadSector(Range table, DateTime? startDate = null, DateTime? endDate = null)
         {
             Entity.ResetID();
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
-                DateTime? start = cells[1].Value;
-                if (!start.HasValue)
+                var interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
+                if (interval == null)
                 {
                     continue;
                 }
-                DateTime? end = cells[2].Value;
-                if (!end.HasValue)
-                {
-                    end = DateTime.Today;
-                }
-                var interval = new DateTimeInterval
-                {
-                    StartDate = start.Value,
-                    EndDate = end.Value,
-                    Description = TrimDataString(cells[5].Value),
-                    Note = TrimDataString(cells[6].Value),
-                };
-                interval.EndDate.AddDays(1);
+                interval.Description = TrimDataString(cells[5].Value);
+                interval.Note = TrimDataString(cells[6].Value);
 
                 var orderName = TrimDataString(cells[0].Value);
                 var order = Order.FirstOrDefault(i => i.Name == orderName);
@@ -172,7 +150,7 @@ namespace DocGen.Data
                 }
 
                 var locationName = TrimDataString(cells[4].Value);
-                var location = Location.FirstOrDefault(i => i.Description == locationName);
+                var location = Location.FirstOrDefault(i => i.Name == locationName);
                 if (location != null)
                 {
                     interval.Location = location;
@@ -197,6 +175,45 @@ namespace DocGen.Data
 
                 Console.WriteLine($"{interval}");
             }
+        }
+
+        protected static DateTimeInterval ComposeInterval
+            ( DateTime? readStartDate
+            , DateTime? readEndDate
+            , DateTime? startDate
+            , DateTime? endDate
+            ) {
+            DateTime intervalStartDate;
+            DateTime intervalEndDate;
+
+            if (startDate.HasValue)
+            {
+                intervalStartDate =
+                    !readStartDate.HasValue
+                    ? startDate.Value
+                    : (readStartDate.Value < startDate.Value)
+                      ? startDate.Value
+                      : readStartDate.Value;
+            }
+            else if (readStartDate.HasValue) { intervalStartDate = readStartDate.Value; }
+            else return null;
+
+            intervalEndDate =
+                endDate.HasValue
+                    ? !readEndDate.HasValue
+                        ? endDate.Value
+                        : (readEndDate.Value < endDate.Value)
+                            ? readEndDate.Value
+                            : endDate.Value
+                    : !readEndDate.HasValue
+                        ? DateTime.Today
+                        : readEndDate.Value;
+
+            return new DateTimeInterval
+            {
+                StartDate = intervalStartDate,
+                EndDate = intervalEndDate.AddDays(1),
+            };
         }
 
         public static string TrimDataString(string data)
