@@ -126,14 +126,12 @@ namespace DocGen.Processor
         }
         protected static string FormatTotalOrders(Person person)
         {
-            string res = string.Empty;
             var orders = new Dictionary<string, List<string>>();
             foreach (var interval in person.Normalized.Where(i => !i.IsInactive))
             {
                 AddOrder(interval, orders);
             }
-            res = string.Join(Environment.NewLine, orders.Select(i => $"{i.Key}, {string.Join(", ", i.Value)}"));
-            return res;
+            return FormatOrdersDictionary(orders);
         }
         protected static void AddOrder(DateTimeInterval interval, Dictionary<string, List<string>> orders)
         {
@@ -155,6 +153,15 @@ namespace DocGen.Processor
                     notes.Add(note);
                 }
             }
+        }
+        private static string FormatOrdersDictionary(Dictionary<string, List<string>> orders)
+        {
+            return string.Join(
+                Environment.NewLine,
+                orders.Select(
+                        i => $"{i.Key}, {string.Join(", ", i.Value)}".TrimEnd(',', ' ')
+                        )
+                );
         }
     }
 }
