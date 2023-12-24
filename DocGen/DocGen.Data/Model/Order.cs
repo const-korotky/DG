@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace DocGen.Data.Model
 {
-    public class Order
+    public class Order : ColorfulEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string CodeName { get; set; }
-
-        public double Color { get; set; }
-        public double FontColor { get; set; }
 
         public Order() : base() { }
 

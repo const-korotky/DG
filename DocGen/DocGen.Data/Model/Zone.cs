@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 
 namespace DocGen.Data.Model
 {
-    public class Zone
+    public class Zone : ColorfulEntity
     {
         public string Name { get; set; }
         public double Value { get; set; }
-
-        public double Color { get; set; }
-        public double FontColor { get; set; }
 
         public Zone() : base() { }
 

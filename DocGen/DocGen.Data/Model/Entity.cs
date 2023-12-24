@@ -11,9 +11,16 @@ namespace DocGen.Data.Model
         private static int NextID = 0;
         public static void ResetID(int @base = 0) { NextID = @base; }
 
-
         public int ID { get; set; }
 
         protected Entity() { ID = ++NextID; }
+    }
+
+    public abstract class ColorfulEntity : Entity
+    {
+        public double Color { get; set; }
+        public double FontColor { get; set; }
+
+        protected ColorfulEntity() : base() { }
     }
 }

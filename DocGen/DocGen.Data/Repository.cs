@@ -23,7 +23,7 @@ namespace DocGen.Data
             Order = new List<Order>();
         }
 
-        public void Load(Workbook workbook)
+        public void Load(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
         {
             LoadPerson(GetTable(workbook, "ОС", "PERSON"));
             LoadLocation(GetTable(workbook, "ЛОКАЦІЯ", "LOCATION"));

@@ -231,10 +231,11 @@ namespace DocGen.Processor
             }
             cell.Value = interval.Location?.Name;
             AddComment(cell, interval);
-            if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
+            var select = SelectPrintOptionColor(interval, printOption);
+            if (select != null)
             {
-                cell.Interior.Color = color;
-                cell.Font.ColorIndex = fontColor;
+                cell.Interior.Color = select.Color;
+                cell.Font.ColorIndex = select.FontColor;
             }
             person.Normalize(interval, date);
         }
@@ -254,10 +255,11 @@ namespace DocGen.Processor
             {
                 cell.Value = interval.Location?.Name;
                 AddComment(cell, interval);
-                if (GetIntervalPrintOptionData(interval, printOption, out double color, out double fontColor))
+                var select = SelectPrintOptionColor(interval, printOption);
+                if (select != null)
                 {
-                    cell.Interior.Color = color;
-                    cell.Font.ColorIndex = fontColor;
+                    cell.Interior.Color = select.Color;
+                    cell.Font.ColorIndex = select.FontColor;
                 }
             }
         }
@@ -320,47 +322,14 @@ namespace DocGen.Processor
                 ;
             return ((select.Count > 0) ? select.Last() : null);
         }
-        private static bool GetIntervalPrintOptionData
-            ( DateTimeInterval interval
-            , PrintOption printOption
-            , out double color
-            , out double fontColor 
-            ) {
-            color = 0;
-            fontColor = 0;
+        private static ColorfulEntity SelectPrintOptionColor(DateTimeInterval interval, PrintOption printOption)
+        {
             switch (printOption)
             {
-                case PrintOption.Order:
-                {
-                    if (interval.Order != null)
-                    {
-                        color = interval.Order.Color;
-                        fontColor = interval.Order.FontColor;
-                        return true;
-                    }
-                    return false;
-                }
-                case PrintOption.Location:
-                {
-                    if (interval.Location != null)
-                    {
-                        color = interval.Location.Color;
-                        fontColor = interval.Location.FontColor;
-                        return true;
-                    }
-                    return false;
-                }
-                case PrintOption.Zone:
-                {
-                    if (interval.Zone != null)
-                    {
-                        color = interval.Zone.Color;
-                        fontColor = interval.Zone.FontColor;
-                        return true;
-                    }
-                    return false;
-                }
-                default: return false;
+                case PrintOption.Order: return interval.Order;
+                case PrintOption.Location: return interval.Location;
+                case PrintOption.Zone: return interval.Zone;
+                default: return null;
             }
         }
 
