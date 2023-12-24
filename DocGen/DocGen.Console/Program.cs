@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Interop.Word;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using WordApplication = Microsoft.Office.Interop.Word.Application;
-using WordDocument = Microsoft.Office.Interop.Word.Document;
+
 using DocGen.Processor;
-using System.IO;
 
 namespace DocGen.Console
 {
@@ -24,13 +20,21 @@ namespace DocGen.Console
 
             DateTime startDate = new DateTime(2023, 8, 1);
             DateTime endDate = startDate.AddMonths(1);
-            PrintOption printOptions = (PrintOption.Order|PrintOption.Location|PrintOption.Zone);
+            //PrintOption printOptions = (PrintOption.Order|PrintOption.Location|PrintOption.Zone);
+            PrintOption printOptions = PrintOption.Order;
 
             var excelProcessor = new _ExcelProcessor()
             {
-                SourceDataFilePath = @"D:\MSC\DG\examples.copy\серпень.db.xlsm",
+                SourceFilePath = @"D:\MSC\DG\examples.copy\серпень.db.xlsm",
             };
             excelProcessor.Process(startDate, endDate, printOptions);
+
+            var wordProcessor = new _WordProcessor()
+            {
+                SourceFilePath = @"D:\MSC\DG\examples.copy\РАПОРТ.docx",
+                Datastore = excelProcessor.Datastore,
+            };
+            wordProcessor.Process(PrintZone._100);
         }
 
         private static List<BR> ProcessExcelBRs()

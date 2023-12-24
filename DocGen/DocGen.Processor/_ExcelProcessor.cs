@@ -1,86 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DocGen.Data;
-using DocGen.Data.Model;
+
 using Microsoft.Office.Interop.Excel;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 
+using DocGen.Data;
+using DocGen.Data.Model;
+
 namespace DocGen.Processor
 {
-    public class _ExcelProcessor
+    public class _ExcelProcessor : BaseProcessor
     {
-        #region Properties and Fields
-
-        public event Action<int, string> ProgressUpdatedEvent;
-        protected void ProgressUpdated(double percentage, string message = null)
+        public override void OpenDocumnet(string filePath)
         {
-            if (ProgressUpdatedEvent != null)
-            {
-                ProgressUpdatedEvent(Convert.ToInt32(Math.Round(percentage)), message);
-            }
+            System.Diagnostics.Process.Start("excel", filePath);
         }
-
-        public string SourceDataFilePath { get; set; }
-
-        public string DestinationFilePath { get; protected set; }
-        protected string UpdateDestinationFilePath()
-        {
-            var dirPath = Path.GetDirectoryName(SourceDataFilePath);
-            var fileName = Path.GetFileNameWithoutExtension(SourceDataFilePath);
-            var extension = Path.GetExtension(SourceDataFilePath);
-
-            string fullFileName = string.Empty;
-            do {
-                if (fileCount < 1)
-                {
-                    fullFileName = $"{fileName}.звіт{extension}";
-                }
-                else if (fileCount == 1)
-                {
-                    fullFileName = $"{fileName}.звіт1{extension}";
-                }
-                else
-                {
-                    fullFileName = fullFileName.Replace($"звіт{fileCount-1}", $"звіт{fileCount}");
-                }
-                DestinationFilePath = Path.Combine(dirPath, fullFileName);
-                fileCount += 1;
-            } while (File.Exists(DestinationFilePath));
-            return DestinationFilePath;
-        }
-        private static byte fileCount = 0;
-
-        #endregion Properties and Fields
 
         public void Process(DateTime startDate, DateTime endDate, PrintOption printOptions)
         {
-            ExcelApplication excelApplication = new ExcelApplication();
-            Workbook workbook = excelApplication.Workbooks.Open(SourceDataFilePath);
+            ExcelApplication excel = new ExcelApplication();
+            Workbook workbook = excel.Workbooks.Open(SourceFilePath);
             try
             {
                 Load(workbook, startDate, endDate);
                 Print(workbook, startDate, endDate, printOptions);
 
-                workbook.SaveAs(UpdateDestinationFilePath());
+                //workbook.SaveAs(UpdateDestinationFilePath());
                 workbook.Close(SaveChanges: false);
 
-                excelApplication.Quit();
+                excel.Quit();
             }
             catch { }
             finally
             {
                 Marshal.FinalReleaseComObject(workbook);
-                Marshal.FinalReleaseComObject(excelApplication);
+                Marshal.FinalReleaseComObject(excel);
             }
         }
 
         #region Load Datastore
-
-        public Datastore Datastore { get; protected set; }
 
         public void Load(Workbook workbook, DateTime startDate, DateTime endDate)
         {

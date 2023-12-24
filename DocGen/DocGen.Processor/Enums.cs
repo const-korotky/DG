@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocGen.Processor
 {
@@ -12,5 +8,13 @@ namespace DocGen.Processor
         Order = 0,
         Location = 1,
         Zone = 2,
+    }
+
+    [Flags]
+    public enum PrintZone : byte
+    {
+        _0 = 0,
+        _30 = 1,
+        _100 = 2,
     }
 }
