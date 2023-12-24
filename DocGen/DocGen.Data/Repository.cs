@@ -65,6 +65,16 @@ namespace DocGen.Data
                     Color = cells[2].Interior.Color,
                     FontColor = cells[2].Font.ColorIndex,
                 };
+                if (string.IsNullOrWhiteSpace(location.Name))
+                {
+                    continue;
+                }
+                if (string.IsNullOrWhiteSpace(location.CodeName))
+                {
+                    var name = location.Name;
+                    int length = ((name.Length < 5) ? name.Length : 5);
+                    location.CodeName = name.Substring(0, length);
+                }
                 Location.Add(location);
                 Console.WriteLine(location);
             }
