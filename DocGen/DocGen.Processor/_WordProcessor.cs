@@ -21,18 +21,24 @@ namespace DocGen.Processor
 
         public override void Process()
         {
+            UpdateProgress(70, "Відкриття шаблону рапорта....");
             WordApplication word = new WordApplication();
             WordDocument doc = null;
             try
             {
                 doc = word.Documents.Open(SourceFilePath, ReadOnly: true, Visible: false);
+                UpdateProgress(71, "Шаблон рапорта відкрито.");
 
+                UpdateProgress(71, "Генерація рапорта....");
                 GenerateReport(doc);
+                UpdateProgress(98, "Генерацію рапорта завершено.");
 
+                UpdateProgress(98, "Збереження рапорта....");
                 doc.SaveAs(UpdateDestinationFilePath());
                 doc.Close(SaveChanges: false);
 
                 word.Quit();
+                UpdateProgress(99, "Рапорт збережено.");
             }
             catch (Exception e) { }
             catch { }
@@ -48,6 +54,8 @@ namespace DocGen.Processor
 
         public void GenerateReport(WordDocument doc)
         {
+            double percent = 71F;
+
             Table table = doc.Tables[1];
             var rowIndex = 2;
 
@@ -60,6 +68,8 @@ namespace DocGen.Processor
                     table.Rows.Add();
                     ++rowIndex;
                 }
+                percent += 0.15F;
+                UpdateProgress(percent);
                 Console.WriteLine($"WORD: {person}");
             }
             //table.Rows.Last.Delete();

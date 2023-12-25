@@ -14,6 +14,8 @@ namespace DocGen.Processor
 {
     public class _ExcelProcessor : BaseProcessor
     {
+        private double _percent = 0F;
+
         public PrintOption PrintOptions { get; set; }
         public int PrintScale { get; set; } = 100;
 
@@ -27,19 +29,31 @@ namespace DocGen.Processor
 
         public override void Process()
         {
+            _percent = 0F;
+
+            UpdateProgress(0, "Відкриття бази даних....");
             ExcelApplication excel = new ExcelApplication();
             Workbook workbook = null;
             try
             {
                 workbook = excel.Workbooks.Open(SourceFilePath);
+                UpdateProgress(1, "База даних відкрита.");
 
+                UpdateProgress(1, "Завантаження бази даних....");
                 Load(workbook);
-                Print(workbook);
+                UpdateProgress(15, "Завантаження бази даних завершено.");
 
+                _percent = 15F;
+                UpdateProgress(15, "Генерація діаграми....");
+                Print(workbook);
+                UpdateProgress(70, "Генерацію діаграми завершено.");
+
+                UpdateProgress(70, "Збереження діаграми.....");
                 workbook.SaveAs(UpdateDestinationFilePath());
                 workbook.Close(SaveChanges: false);
 
                 excel.Quit();
+                UpdateProgress(71, "Діаграму збережено.");
             }
             catch (Exception e) { }
             catch { }
@@ -113,9 +127,12 @@ namespace DocGen.Processor
                         currDate = currDate.AddDays(1);
                     }
                 }
-                Console.WriteLine(person);
                 colIndex = 1;
                 rowIndex += 1;
+
+                _percent += 0.135F;
+                UpdateProgress(_percent);
+                Console.WriteLine(person);
             }
             Datastore.IsNormalized = true;
             PrintFooter(worksheet, PrintScale);

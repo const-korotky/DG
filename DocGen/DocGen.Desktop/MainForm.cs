@@ -98,6 +98,7 @@ namespace DocGen.Desktop
         }
         private void progressUpdated_EventHandler(int percentage, string message = null)
         {
+            progressBar.Value = percentage;
             if (!string.IsNullOrWhiteSpace(message))
             {
                 lb_progress.Text = $"{percentage}% - {message}";
@@ -111,7 +112,6 @@ namespace DocGen.Desktop
                     lb_progress.Text = $"{percentage}% -{split[1]}";
                 }
             }
-            progressBar.Value = percentage;
         }
 
 
