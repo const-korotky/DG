@@ -27,7 +27,7 @@ namespace DocGen.Processor
             System.Diagnostics.Process.Start("excel", filePath);
         }
 
-        public override void Process()
+        public override void Process(bool reloadDatastore = false)
         {
             _percent = 0F;
 
@@ -40,7 +40,7 @@ namespace DocGen.Processor
                 UpdateProgress(1, "База даних відкрита.");
 
                 UpdateProgress(1, "Завантаження бази даних....");
-                Load(workbook);
+                LoadDatastore(workbook, reloadDatastore);
                 UpdateProgress(15, "Завантаження бази даних завершено.");
 
                 _percent = 15F;
@@ -69,10 +69,13 @@ namespace DocGen.Processor
 
         #region Load Datastore
 
-        public void Load(Workbook workbook)
+        public void LoadDatastore(Workbook workbook, bool reload = false)
         {
-            Datastore = new Datastore();
-            Datastore.Load(workbook, StartDate, EndDate);
+            if ((Datastore == null) || !Datastore.IsLoaded || reload)
+            {
+                Datastore = new Datastore();
+                Datastore.Load(workbook, StartDate, EndDate);
+            }
         }
 
         #endregion Load Datastore

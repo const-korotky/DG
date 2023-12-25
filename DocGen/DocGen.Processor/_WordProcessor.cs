@@ -19,7 +19,7 @@ namespace DocGen.Processor
             System.Diagnostics.Process.Start("winword", filePath);
         }
 
-        public override void Process()
+        public override void Process(bool reloadDatastore = false)
         {
             UpdateProgress(70, "Відкриття шаблону рапорта....");
             WordApplication word = new WordApplication();

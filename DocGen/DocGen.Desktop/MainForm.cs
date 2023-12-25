@@ -78,7 +78,7 @@ namespace DocGen.Desktop
 
             ExcelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
             ExcelProcessor.PrintOptions = (PrintOption.Order | PrintOption.Location | PrintOption.Zone);
-            ExcelProcessor.Process();
+            ExcelProcessor.Process(chbx_reloadDb.Checked);
             ExcelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
             WordProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
@@ -95,6 +95,9 @@ namespace DocGen.Desktop
             gb_result.Visible = true;
             txb_raport_path.Text = WordProcessor.DestinationFilePath;
             txb_diagram_path.Text = ExcelProcessor.DestinationFilePath;
+
+            lb_reloadDb.Visible = ExcelProcessor.Datastore.IsLoaded;
+            chbx_reloadDb.Visible = ExcelProcessor.Datastore.IsLoaded;
         }
         private void progressUpdated_EventHandler(int percentage, string message = null)
         {

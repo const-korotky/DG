@@ -39,6 +39,6 @@ namespace DocGen.Processor
 
         public abstract void OpenDocumnet(string filePath);
 
-        public abstract void Process();
+        public abstract void Process(bool reloadDatastore = false);
     }
 }

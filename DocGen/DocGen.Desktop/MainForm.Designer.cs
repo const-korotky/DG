@@ -48,12 +48,14 @@
             this.lb_progress = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.nmb_zoom = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             this.dt_EndDate = new System.Windows.Forms.DateTimePicker();
             this.dt_StartDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.nmb_zoom = new System.Windows.Forms.NumericUpDown();
+            this.lb_reloadDb = new System.Windows.Forms.Label();
+            this.chbx_reloadDb = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
@@ -252,6 +254,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chbx_reloadDb);
+            this.groupBox3.Controls.Add(this.lb_reloadDb);
             this.groupBox3.Controls.Add(this.nmb_zoom);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.dt_EndDate);
@@ -264,6 +268,38 @@
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Параметри";
+            // 
+            // nmb_zoom
+            // 
+            this.nmb_zoom.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nmb_zoom.Location = new System.Drawing.Point(753, 29);
+            this.nmb_zoom.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nmb_zoom.Name = "nmb_zoom";
+            this.nmb_zoom.Size = new System.Drawing.Size(135, 26);
+            this.nmb_zoom.TabIndex = 13;
+            this.nmb_zoom.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nmb_zoom.ValueChanged += new System.EventHandler(this.nmb_zoom_ValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(555, 31);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(183, 20);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Масштаб діаграми (%):";
             // 
             // dt_EndDate
             // 
@@ -299,37 +335,26 @@
             this.label7.TabIndex = 8;
             this.label7.Text = "Дата Початку:";
             // 
-            // label3
+            // lb_reloadDb
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(564, 31);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(183, 20);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Масштаб діаграми (%):";
+            this.lb_reloadDb.AutoSize = true;
+            this.lb_reloadDb.Location = new System.Drawing.Point(559, 66);
+            this.lb_reloadDb.Name = "lb_reloadDb";
+            this.lb_reloadDb.Size = new System.Drawing.Size(179, 20);
+            this.lb_reloadDb.TabIndex = 14;
+            this.lb_reloadDb.Text = "Перезавантажити БД:";
+            this.lb_reloadDb.Visible = false;
             // 
-            // nmb_zoom
+            // chbx_reloadDb
             // 
-            this.nmb_zoom.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nmb_zoom.Location = new System.Drawing.Point(753, 29);
-            this.nmb_zoom.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nmb_zoom.Name = "nmb_zoom";
-            this.nmb_zoom.Size = new System.Drawing.Size(135, 26);
-            this.nmb_zoom.TabIndex = 13;
-            this.nmb_zoom.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nmb_zoom.ValueChanged += new System.EventHandler(this.nmb_zoom_ValueChanged);
+            this.chbx_reloadDb.AutoSize = true;
+            this.chbx_reloadDb.Location = new System.Drawing.Point(753, 65);
+            this.chbx_reloadDb.Name = "chbx_reloadDb";
+            this.chbx_reloadDb.Size = new System.Drawing.Size(22, 21);
+            this.chbx_reloadDb.TabIndex = 15;
+            this.chbx_reloadDb.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chbx_reloadDb.UseVisualStyleBackColor = true;
+            this.chbx_reloadDb.Visible = false;
             // 
             // MainForm
             // 
@@ -390,6 +415,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown nmb_zoom;
+        private System.Windows.Forms.CheckBox chbx_reloadDb;
+        private System.Windows.Forms.Label lb_reloadDb;
     }
 }
 

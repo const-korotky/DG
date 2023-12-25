@@ -8,6 +8,7 @@ namespace DocGen.Data
 {
     public class Datastore
     {
+        public bool IsLoaded { get; protected set; }
         public bool IsNormalized { get; set; }
 
         public readonly List<Person> Person;
@@ -31,6 +32,7 @@ namespace DocGen.Data
             LoadOrder(GetTable(workbook, "НАКАЗ", "ORDER"));
             LoadInactive(GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE"), startDate, endDate);
             LoadSector(GetTable(workbook, "СЕКТОР", "SECTOR"), startDate, endDate);
+            IsLoaded = true;
         }
 
         public static Range GetTable(Workbook workbook, string schemeName, string tableName)
