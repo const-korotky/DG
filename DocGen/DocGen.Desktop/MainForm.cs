@@ -30,7 +30,12 @@ namespace DocGen.Desktop
             WordProcessor = new _WordProcessor();
         }
 
-        private void MainForm_Load(object sender, EventArgs e) { }
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            DateTime now = DateTime.Now;
+            dt_StartDate.Value = new DateTime(DateTime.Now.Year, now.Month, 1);
+            dt_EndDate.Value = dt_StartDate.Value.AddMonths(1).AddDays(-1);
+        }
 
         private void btn_open_data_Click(object sender, EventArgs e)
         {
@@ -126,6 +131,11 @@ namespace DocGen.Desktop
         private void txb_templ_TextChanged(object sender, EventArgs e)
         {
             WordProcessor.SourceFilePath = txb_templ.Text;
+        }
+
+        private void nmb_zoom_ValueChanged(object sender, EventArgs e)
+        {
+            ExcelProcessor.PrintScale = Convert.ToInt32(nmb_zoom.Value);
         }
     }
 }

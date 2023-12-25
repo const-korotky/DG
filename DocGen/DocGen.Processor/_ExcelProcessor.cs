@@ -15,9 +15,10 @@ namespace DocGen.Processor
     public class _ExcelProcessor : BaseProcessor
     {
         public PrintOption PrintOptions { get; set; }
+        public int PrintScale { get; set; } = 100;
 
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime StartDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        public DateTime EndDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1);
 
         public override void OpenDocumnet(string filePath)
         {
@@ -117,7 +118,7 @@ namespace DocGen.Processor
                 rowIndex += 1;
             }
             Datastore.IsNormalized = true;
-            PrintFooter(worksheet);
+            PrintFooter(worksheet, PrintScale);
         }
 
         private static string GetWorksheetName(PrintOption printOption)
@@ -259,7 +260,7 @@ namespace DocGen.Processor
             return $"{interval.Location?.Name}: {interval.Order.Name}{descr}";
         }
 
-        private static void PrintFooter(Worksheet worksheet)
+        private static void PrintFooter(Worksheet worksheet, double scale)
         {
             var leftCornerCell = worksheet.Cells[1, 1];
             var nextRowCell = worksheet.Cells[2, 1];
@@ -271,6 +272,7 @@ namespace DocGen.Processor
             worksheet.Application.ActiveWindow.SplitRow = 1;
             worksheet.Application.ActiveWindow.SplitColumn = 1;
             worksheet.Application.ActiveWindow.FreezePanes = true;
+            worksheet.Application.ActiveWindow.Zoom = scale;
         }
 
         private static DateTimeInterval SelectDateTimeInterval(IEnumerable<DateTimeInterval> intervals, DateTime date)

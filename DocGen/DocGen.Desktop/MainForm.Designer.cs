@@ -52,11 +52,14 @@
             this.dt_StartDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.nmb_zoom = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
             this.gb_progress.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmb_zoom)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -83,10 +86,10 @@
             this.btn_open_data.UseVisualStyleBackColor = true;
             this.btn_open_data.Click += new System.EventHandler(this.btn_open_data_Click);
             // 
-            // tbx_data
+            // txb_data
             // 
             this.txb_data.Location = new System.Drawing.Point(152, 29);
-            this.txb_data.Name = "tbx_data";
+            this.txb_data.Name = "txb_data";
             this.txb_data.Size = new System.Drawing.Size(694, 26);
             this.txb_data.TabIndex = 3;
             this.txb_data.TextChanged += new System.EventHandler(this.txb_data_TextChanged);
@@ -124,10 +127,10 @@
             this.btn_open_templ.UseVisualStyleBackColor = true;
             this.btn_open_templ.Click += new System.EventHandler(this.btn_open_templ_Click);
             // 
-            // tbx_templ
+            // txb_templ
             // 
             this.txb_templ.Location = new System.Drawing.Point(152, 33);
-            this.txb_templ.Name = "tbx_templ";
+            this.txb_templ.Name = "txb_templ";
             this.txb_templ.Size = new System.Drawing.Size(694, 26);
             this.txb_templ.TabIndex = 1;
             this.txb_templ.TextChanged += new System.EventHandler(this.txb_templ_TextChanged);
@@ -177,10 +180,10 @@
             this.btn_diagram_open.UseVisualStyleBackColor = true;
             this.btn_diagram_open.Click += new System.EventHandler(this.btn_diagram_open_Click);
             // 
-            // tbx_diagram
+            // txb_diagram_path
             // 
             this.txb_diagram_path.Location = new System.Drawing.Point(152, 72);
-            this.txb_diagram_path.Name = "tbx_diagram";
+            this.txb_diagram_path.Name = "txb_diagram_path";
             this.txb_diagram_path.Size = new System.Drawing.Size(586, 26);
             this.txb_diagram_path.TabIndex = 5;
             // 
@@ -249,6 +252,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.nmb_zoom);
+            this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.dt_EndDate);
             this.groupBox3.Controls.Add(this.dt_StartDate);
             this.groupBox3.Controls.Add(this.label1);
@@ -294,6 +299,38 @@
             this.label7.TabIndex = 8;
             this.label7.Text = "Дата Початку:";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(564, 31);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(183, 20);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Масштаб діаграми (%):";
+            // 
+            // nmb_zoom
+            // 
+            this.nmb_zoom.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nmb_zoom.Location = new System.Drawing.Point(753, 29);
+            this.nmb_zoom.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nmb_zoom.Name = "nmb_zoom";
+            this.nmb_zoom.Size = new System.Drawing.Size(135, 26);
+            this.nmb_zoom.TabIndex = 13;
+            this.nmb_zoom.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nmb_zoom.ValueChanged += new System.EventHandler(this.nmb_zoom_ValueChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -320,6 +357,7 @@
             this.gb_progress.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmb_zoom)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -350,6 +388,8 @@
         private System.Windows.Forms.DateTimePicker dt_EndDate;
         private System.Windows.Forms.DateTimePicker dt_StartDate;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown nmb_zoom;
     }
 }
 
