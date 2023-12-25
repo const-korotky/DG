@@ -5,9 +5,10 @@ namespace DocGen.Processor
     [Flags]
     public enum PrintOption : byte
     {
-        Order = 0,
-        Location = 1,
-        Zone = 2,
+        None = 0,
+        Order = 1,
+        Location = 2,
+        Zone = 3,
     }
 
     [Flags]

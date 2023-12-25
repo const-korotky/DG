@@ -49,5 +49,7 @@ namespace DocGen.Processor
         public Datastore Datastore { get; set; }
 
         public abstract void OpenDocumnet(string filePath);
+
+        public abstract void Process();
     }
 }

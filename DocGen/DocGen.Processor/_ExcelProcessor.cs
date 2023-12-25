@@ -14,21 +14,26 @@ namespace DocGen.Processor
 {
     public class _ExcelProcessor : BaseProcessor
     {
+        public PrintOption PrintOptions { get; set; }
+
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
         public override void OpenDocumnet(string filePath)
         {
             System.Diagnostics.Process.Start("excel", filePath);
         }
 
-        public void Process(DateTime startDate, DateTime endDate, PrintOption printOptions)
+        public override void Process()
         {
             ExcelApplication excel = new ExcelApplication();
             Workbook workbook = excel.Workbooks.Open(SourceFilePath);
             try
             {
-                Load(workbook, startDate, endDate);
-                Print(workbook, startDate, endDate, printOptions);
+                Load(workbook);
+                Print(workbook);
 
-                //workbook.SaveAs(UpdateDestinationFilePath());
+                workbook.SaveAs(UpdateDestinationFilePath());
                 workbook.Close(SaveChanges: false);
 
                 excel.Quit();
@@ -43,48 +48,35 @@ namespace DocGen.Processor
 
         #region Load Datastore
 
-        public void Load(Workbook workbook, DateTime startDate, DateTime endDate)
+        public void Load(Workbook workbook)
         {
             Datastore = new Datastore();
-            Datastore.Load(workbook, startDate, endDate);
+            Datastore.Load(workbook, StartDate, EndDate);
         }
 
         #endregion Load Datastore
 
         #region Print
 
-        public void Print
-            ( Workbook workbook
-            , DateTime startDate
-            , DateTime endDate
-            , PrintOption printOptions
-            ) {
-            PrintByOption(workbook, startDate, endDate, printOptions, PrintOption.Order);
-            PrintByOption(workbook, startDate, endDate, printOptions, PrintOption.Location);
-            PrintByOption(workbook, startDate, endDate, printOptions, PrintOption.Zone);
+        public void Print(Workbook workbook)
+        {
+            TryPrint(workbook, PrintOption.Order);
+            TryPrint(workbook, PrintOption.Location);
+            TryPrint(workbook, PrintOption.Zone);
         }
-        private void PrintByOption
-            ( Workbook workbook
-            , DateTime startDate
-            , DateTime endDate
-            , PrintOption printOptions
-            , PrintOption targetPrintOption
-            ) {
-            if ((printOptions & targetPrintOption) == targetPrintOption)
+        protected void TryPrint(Workbook workbook, PrintOption targetPrintOption)
+        {
+            if ((PrintOptions & targetPrintOption) == targetPrintOption)
             {
-                PrintByOption(workbook, startDate, endDate, targetPrintOption);
+                PrintByOption(workbook, targetPrintOption);
             }
         }
 
-        public void PrintByOption
-            ( Workbook workbook
-            , DateTime startDate
-            , DateTime endDate
-            , PrintOption targetPrintOption
-            ) {
-            string worksheetName = GetWorksheetName(targetPrintOption);
+        public void PrintByOption(Workbook workbook, PrintOption printOption)
+        {
+            string worksheetName = GetWorksheetName(printOption);
             Worksheet worksheet = AddWorksheet(workbook, worksheetName);
-            PrintHeader(worksheet, startDate, endDate);
+            PrintHeader(worksheet, StartDate, EndDate);
 
             int rowIndex = 2;
             int colIndex = 1;
@@ -96,19 +88,19 @@ namespace DocGen.Processor
                 cell.Value = person.Name;
                 if (!IsCompanyHeader(cell))
                 {
-                    var currDate = startDate;
-                    while (currDate < endDate)
+                    var currDate = StartDate;
+                    while (currDate < EndDate)
                     {
                         cell = worksheet.Cells[rowIndex, ++colIndex];
                         if (Datastore.IsNormalized)
                         {
-                            PrintNormalizedDate(cell, person, currDate, targetPrintOption);
+                            PrintNormalizedDate(cell, person, currDate, printOption);
                         }
                         else
                         {
                             if (!IsInactiveDate(cell, person, currDate))
                             {
-                                PrintSectorDate(cell, person, currDate, targetPrintOption);
+                                PrintSectorDate(cell, person, currDate, printOption);
                             }
                         }
                         currDate = currDate.AddDays(1);
@@ -129,7 +121,7 @@ namespace DocGen.Processor
                 case PrintOption.Order:    return "Звіт по Наказам";
                 case PrintOption.Location: return "Звіт по Локаціях";
                 case PrintOption.Zone:     return "Звіт по Зонах";
-                default: return "Звіт";
+                default: return "N/A";
             }
         }
         private static Worksheet AddWorksheet(Workbook workbook, string worksheetName)

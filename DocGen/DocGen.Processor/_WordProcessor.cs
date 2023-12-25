@@ -19,7 +19,7 @@ namespace DocGen.Processor
             System.Diagnostics.Process.Start("winword", filePath);
         }
 
-        public void Process(PrintZone zone)
+        public override void Process()
         {
             WordApplication word = new WordApplication();
             WordDocument doc = word.Documents.Open(SourceFilePath, ReadOnly: true, Visible: false);
@@ -29,6 +29,7 @@ namespace DocGen.Processor
 
                 doc.SaveAs(UpdateDestinationFilePath());
                 doc.Close(SaveChanges: false);
+
                 word.Quit();
             }
             catch { }
