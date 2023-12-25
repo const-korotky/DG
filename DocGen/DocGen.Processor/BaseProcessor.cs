@@ -4,18 +4,8 @@ using DocGen.Data;
 
 namespace DocGen.Processor
 {
-    public abstract class BaseProcessor
+    public abstract class BaseProcessor : ProgressCapable
     {
-        public event Action<int, string> ProgressUpdatedEvent;
-        protected void UpdateProgress(double percentage, string message = null)
-        {
-            var progressUpdated = ProgressUpdatedEvent;
-            if (progressUpdated != null)
-            {
-                progressUpdated(Convert.ToInt32(Math.Round(percentage)), message);
-            }
-        }
-
         public string SourceFilePath { get; set; }
 
         public string DestinationFilePath { get; protected set; }
@@ -40,5 +30,27 @@ namespace DocGen.Processor
         public abstract void OpenDocumnet(string filePath);
 
         public abstract void Process(bool reloadDatastore = false);
+    }
+
+    public abstract class ProgressCapable
+    {
+        public event Action<int, string> ProgressUpdatedEvent;
+
+        protected void UpdateProgress(double percentage, string message)
+        {
+            ProgressPercentage = percentage;
+
+            var progressUpdated = ProgressUpdatedEvent;
+            if (progressUpdated != null)
+            {
+                var value = Convert.ToInt32(Math.Round(ProgressPercentage));
+                progressUpdated(value, message);
+            }
+        }
+        protected void IncrementProgressBy(double value)
+        {
+            UpdateProgress(ProgressPercentage + value, null);
+        }
+        public double ProgressPercentage { get; private set; } = 0F;
     }
 }

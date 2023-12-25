@@ -8,6 +8,9 @@ namespace DocGen.Data
 {
     public class Datastore
     {
+        protected readonly Action<double> ProgressIncrementor = null;
+        protected void IncrementProgressBy(double value) { ProgressIncrementor?.Invoke(value); }
+
         public bool IsLoaded { get; protected set; }
         public bool IsNormalized { get; set; }
 
@@ -16,8 +19,10 @@ namespace DocGen.Data
         public readonly List<Zone> Zone;
         public readonly List<Order> Order;
 
-        public Datastore()
+        public Datastore(Action<double> progressIncrementor = null)
         {
+            ProgressIncrementor = progressIncrementor;
+
             Person = new List<Person>();
             Location = new List<Location>();
             Zone = new List<Zone>();
@@ -53,6 +58,7 @@ namespace DocGen.Data
                 };
                 Person.Add(person);
                 Console.WriteLine(person);
+                IncrementProgressBy(0.07);
             }
         }
         public void LoadLocation(Range table)
@@ -137,6 +143,7 @@ namespace DocGen.Data
                     person.Inactive.Add(interval);
                 }
                 Console.WriteLine($"{person} {interval}");
+                IncrementProgressBy(0.03);
             }
         }
         public void LoadSector(Range table, DateTime? startDate = null, DateTime? endDate = null)
@@ -185,6 +192,7 @@ namespace DocGen.Data
                     }
                 }
 
+                IncrementProgressBy(0.05);
                 Console.WriteLine($"{interval}");
             }
         }

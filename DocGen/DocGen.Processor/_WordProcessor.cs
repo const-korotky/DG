@@ -54,8 +54,6 @@ namespace DocGen.Processor
 
         public void GenerateReport(WordDocument doc)
         {
-            double percent = 71F;
-
             Table table = doc.Tables[1];
             var rowIndex = 2;
 
@@ -68,8 +66,7 @@ namespace DocGen.Processor
                     table.Rows.Add();
                     ++rowIndex;
                 }
-                percent += 0.15F;
-                UpdateProgress(percent);
+                IncrementProgressBy(0.15);
                 Console.WriteLine($"WORD: {person}");
             }
             //table.Rows.Last.Delete();
