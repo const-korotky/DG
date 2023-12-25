@@ -27,9 +27,11 @@ namespace DocGen.Processor
         public override void Process()
         {
             ExcelApplication excel = new ExcelApplication();
-            Workbook workbook = excel.Workbooks.Open(SourceFilePath);
+            Workbook workbook = null;
             try
             {
+                workbook = excel.Workbooks.Open(SourceFilePath);
+
                 Load(workbook);
                 Print(workbook);
 
@@ -38,10 +40,14 @@ namespace DocGen.Processor
 
                 excel.Quit();
             }
+            catch (Exception e) { }
             catch { }
             finally
             {
-                Marshal.FinalReleaseComObject(workbook);
+                if (workbook != null)
+                {
+                    Marshal.FinalReleaseComObject(workbook);
+                }
                 Marshal.FinalReleaseComObject(excel);
             }
         }

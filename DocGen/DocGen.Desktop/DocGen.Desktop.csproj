@@ -81,6 +81,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DocGen.Data\DocGen.Data.csproj">
+      <Project>{0f6ca8fb-88a1-4f0a-a03d-7648187d16f4}</Project>
+      <Name>DocGen.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DocGen.Processor\DocGen.Processor.csproj">
       <Project>{d906df05-db09-4449-ba4c-cafa1c466751}</Project>
       <Name>DocGen.Processor</Name>

@@ -22,9 +22,11 @@ namespace DocGen.Processor
         public override void Process()
         {
             WordApplication word = new WordApplication();
-            WordDocument doc = word.Documents.Open(SourceFilePath, ReadOnly: true, Visible: false);
+            WordDocument doc = null;
             try
             {
+                doc = word.Documents.Open(SourceFilePath, ReadOnly: true, Visible: false);
+
                 GenerateReport(doc);
 
                 doc.SaveAs(UpdateDestinationFilePath());
@@ -32,10 +34,14 @@ namespace DocGen.Processor
 
                 word.Quit();
             }
+            catch (Exception e) { }
             catch { }
             finally
             {
-                Marshal.FinalReleaseComObject(doc);
+                if (doc != null)
+                {
+                    Marshal.FinalReleaseComObject(doc);
+                }
                 Marshal.FinalReleaseComObject(word);
             }
         }

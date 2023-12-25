@@ -16,27 +16,22 @@ namespace DocGen.Desktop
 {
     public partial class MainForm : Form
     {
-        public const string WordFileExtentionFilter = "Word files (*.docx; *.doc)|*.docx; *.doc|All files (*.*)|*.*";
-        public const string ExcelFileExtentionFilter = "Excel files (*.xlsx; *.xls)|*.xls; *.xlsx|All files (*.*)|*.*";
+        public const string WordFileExtentionFilter = "Word files (*.doc; *.docx)|*.doc; *.docx|All files (*.*)|*.*";
+        public const string ExcelFileExtentionFilter = "Excel files (*.xls; *.xlsx; *.xlsm)|*.xls; *.xlsx; *.xlsm|All files (*.*)|*.*";
+
+        private readonly _ExcelProcessor ExcelProcessor;
+        private readonly _WordProcessor WordProcessor;
 
         public MainForm()
         {
             InitializeComponent();
+
+            ExcelProcessor = new _ExcelProcessor();
+            WordProcessor = new _WordProcessor();
         }
 
         private void MainForm_Load(object sender, EventArgs e) { }
 
-        private void btn_open_szt_Click(object sender, EventArgs e)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = ExcelFileExtentionFilter
-            };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                tbx_szt.Text = dialog.FileName;
-            }
-        }
         private void btn_open_data_Click(object sender, EventArgs e)
         {
             var dialog = new OpenFileDialog
@@ -45,7 +40,7 @@ namespace DocGen.Desktop
             };
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                tbx_data.Text = dialog.FileName;
+                txb_data.Text = dialog.FileName;
             }
         }
         private void btn_open_templ_Click(object sender, EventArgs e)
@@ -56,12 +51,17 @@ namespace DocGen.Desktop
             };
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                tbx_templ.Text = dialog.FileName;
+                txb_templ.Text = dialog.FileName;
             }
         }
+
         private void btn_open_raport_Click(object sender, EventArgs e)
         {
             WordProcessor.OpenDocumnet(txb_raport_path.Text);
+        }
+        private void btn_diagram_open_Click(object sender, EventArgs e)
+        {
+            ExcelProcessor.OpenDocumnet(txb_diagram_path.Text);
         }
 
 
@@ -71,31 +71,25 @@ namespace DocGen.Desktop
             btn_generate.Enabled = false;
             gb_result.Visible = false;
 
-            var excelProcessor = new ExcelProcessor
-            {
-                SourceDataFilePath = tbx_data.Text,
-                SheetName = cmbx_month.SelectedItem.ToString(),
-            };
-            excelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
-            excelProcessor.Process(populate: true);
-            excelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
+            ExcelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
+            ExcelProcessor.PrintOptions = (PrintOption.Order | PrintOption.Location | PrintOption.Zone);
+            ExcelProcessor.Process();
+            ExcelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
-            var wordProcessor = new WordProcessor
-            {
-                TemplateFilePath = tbx_templ.Text
-            };
-            wordProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
-            wordProcessor.Process(excelProcessor.BRs, excelProcessor.Entries);
-            wordProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
+            WordProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
+            WordProcessor.Datastore = ExcelProcessor.Datastore;
+            WordProcessor.Process();
+            WordProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
             DialogBox.ShowInfo(this, "Генерацію Рапорта завершено.", "Інформація");
 
             btn_generate.Enabled = true;
             progressBar.Value = 100;
-            lb_progress.Text = "операцію завершено";
+            lb_progress.Text = "100% - операцію завершено";
 
             gb_result.Visible = true;
-            txb_raport_path.Text = wordProcessor.DestinationFilePath;
+            txb_raport_path.Text = WordProcessor.DestinationFilePath;
+            txb_diagram_path.Text = ExcelProcessor.DestinationFilePath;
         }
         private void progressUpdated_EventHandler(int percentage, string message = null)
         {
@@ -113,6 +107,25 @@ namespace DocGen.Desktop
                 }
             }
             progressBar.Value = percentage;
+        }
+
+
+        private void dt_StartDate_ValueChanged(object sender, EventArgs e)
+        {
+            ExcelProcessor.StartDate = dt_StartDate.Value;
+        }
+        private void dt_EndDate_ValueChanged(object sender, EventArgs e)
+        {
+            ExcelProcessor.EndDate = dt_EndDate.Value.AddDays(1);
+        }
+
+        private void txb_data_TextChanged(object sender, EventArgs e)
+        {
+            ExcelProcessor.SourceFilePath = txb_data.Text;
+        }
+        private void txb_templ_TextChanged(object sender, EventArgs e)
+        {
+            WordProcessor.SourceFilePath = txb_templ.Text;
         }
     }
 }
