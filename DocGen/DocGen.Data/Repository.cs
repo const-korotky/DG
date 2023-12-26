@@ -50,14 +50,18 @@ namespace DocGen.Data
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
-                var person = new Person
+                string name = TrimDataString(cells[0].Value);
+                if (!string.IsNullOrWhiteSpace(name))
                 {
-                    Name = TrimDataString(cells[0].Value),
-                    Rank = TrimDataString(cells[1].Value),
-                    Company = TrimDataString(cells[2].Value),
-                };
-                Person.Add(person);
-                Console.WriteLine(person);
+                    var person = new Person
+                    {
+                        Name = name,
+                        Rank = TrimDataString(cells[1].Value),
+                        Company = TrimDataString(cells[2].Value),
+                    };
+                    Person.Add(person);
+                    Console.WriteLine(person);
+                }
                 IncrementProgressBy(0.07);
             }
         }
@@ -92,15 +96,19 @@ namespace DocGen.Data
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
-                var zone = new Zone
+                string name = TrimDataString(cells[0].Value);
+                if (!string.IsNullOrWhiteSpace(name))
                 {
-                    Name = TrimDataString(cells[0].Value),
-                    Value = (cells[1].Value ?? 0),
-                    Color = cells[2].Interior.Color,
-                    FontColor = cells[2].Font.ColorIndex,
-                };
-                Zone.Add(zone);
-                Console.WriteLine(zone);
+                    var zone = new Zone
+                    {
+                        Name = name,
+                        Value = (cells[1].Value ?? 0),
+                        Color = cells[2].Interior.Color,
+                        FontColor = cells[2].Font.ColorIndex,
+                    };
+                    Zone.Add(zone);
+                    Console.WriteLine(zone);
+                }
             }
         }
         public void LoadOrder(Range table)
@@ -108,16 +116,20 @@ namespace DocGen.Data
             foreach (Range row in table.Rows)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
-                var order = new Order
+                string name = TrimDataString(cells[0].Value);
+                if (!string.IsNullOrWhiteSpace(name))
                 {
-                    Name = TrimDataString(cells[0].Value),
-                    Description = TrimDataString(cells[1].Value),
-                    CodeName = TrimDataString(cells[2].Value),
-                    Color = cells[3].Interior.Color,
-                    FontColor = cells[3].Font.ColorIndex,
-                };
-                Order.Add(order);
-                Console.WriteLine(order);
+                    var order = new Order
+                    {
+                        Name = name,
+                        Description = TrimDataString(cells[1].Value),
+                        CodeName = TrimDataString(cells[2].Value),
+                        Color = cells[3].Interior.Color,
+                        FontColor = cells[3].Font.ColorIndex,
+                    };
+                    Order.Add(order);
+                    Console.WriteLine(order);
+                }
             }
         }
 
