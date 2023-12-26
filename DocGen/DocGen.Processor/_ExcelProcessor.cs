@@ -139,7 +139,7 @@ namespace DocGen.Processor
         {
             switch (printOption)
             {
-                case PrintOption.Order:    return "Звіт по Наказам";
+                case PrintOption.Order:    return "Звіт по Наказах";
                 case PrintOption.Location: return "Звіт по Локаціях";
                 case PrintOption.Zone:     return "Звіт по Зонах";
                 default: return "N/A";

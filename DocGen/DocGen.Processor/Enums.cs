@@ -7,15 +7,15 @@ namespace DocGen.Processor
     {
         None = 0,
         Order = 1,
-        Location = 2,
-        Zone = 3,
+        Location = 10,
+        Zone = 20,
     }
 
     [Flags]
     public enum PrintZone : byte
     {
-        _0 = 0,
-        _30 = 1,
-        _100 = 2,
+        _0,
+        _30,
+        _100,
     }
 }

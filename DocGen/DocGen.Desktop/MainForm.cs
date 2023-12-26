@@ -72,12 +72,16 @@ namespace DocGen.Desktop
 
         private void btn_generate_Click(object sender, EventArgs e)
         {
+            if (!CheckFilePaths())
+            {
+                return;
+            }
+
             gb_progress.Visible = true;
             btn_generate.Enabled = false;
             gb_result.Visible = false;
 
             ExcelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
-            ExcelProcessor.PrintOptions = (PrintOption.Order | PrintOption.Location | PrintOption.Zone);
             ExcelProcessor.Process(chbx_reloadDb.Checked);
             ExcelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
@@ -86,7 +90,7 @@ namespace DocGen.Desktop
             WordProcessor.Process();
             WordProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
 
-            DialogBox.ShowInfo(this, "Генерацію Рапорта завершено.", "Інформація");
+            DialogBox.ShowInfo(this, "Генерацію Рапорта завершено.");
 
             btn_generate.Enabled = true;
             progressBar.Value = 100;
@@ -139,6 +143,51 @@ namespace DocGen.Desktop
         private void nmb_zoom_ValueChanged(object sender, EventArgs e)
         {
             ExcelProcessor.PrintScale = Convert.ToInt32(nmb_zoom.Value);
+        }
+
+        private void chbx_location_CheckedChanged(object sender, EventArgs e)
+        {
+            SetPrintOptions();
+        }
+        private void chbx_zone_CheckedChanged(object sender, EventArgs e)
+        {
+            SetPrintOptions();
+        }
+        private void SetPrintOptions()
+        {
+            PrintOption options = PrintOption.Order;
+            if (chbx_location.Checked)
+            {
+                options |= PrintOption.Location;
+            }
+            if (chbx_zone.Checked)
+            {
+                options |= PrintOption.Zone;
+            }
+            ExcelProcessor.PrintOptions = options;
+        }
+
+        private bool CheckFilePaths()
+        {
+            if (!File.Exists(ExcelProcessor.SourceFilePath))
+            {
+                var fileName =
+                    string.IsNullOrWhiteSpace(ExcelProcessor.SourceFilePath)
+                        ? "Бази Даних"
+                        : $"\"{ExcelProcessor.SourceFilePath}\"";
+                DialogBox.ShowWarning(this, $"Файл {fileName} не існує.");
+                return false;
+            }
+            if (!File.Exists(WordProcessor.SourceFilePath))
+            {
+                var fileName =
+                    string.IsNullOrWhiteSpace(WordProcessor.SourceFilePath)
+                        ? "Шаблона Рапорта"
+                        : $"\"{WordProcessor.SourceFilePath}\"";
+                DialogBox.ShowWarning(this, $"Файл {fileName} не існує.");
+                return false;
+            }
+            return true;
         }
     }
 }

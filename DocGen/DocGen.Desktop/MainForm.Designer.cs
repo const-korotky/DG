@@ -48,14 +48,18 @@
             this.lb_progress = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chbx_reloadDb = new System.Windows.Forms.CheckBox();
+            this.lb_reloadDb = new System.Windows.Forms.Label();
             this.nmb_zoom = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.dt_EndDate = new System.Windows.Forms.DateTimePicker();
             this.dt_StartDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.lb_reloadDb = new System.Windows.Forms.Label();
-            this.chbx_reloadDb = new System.Windows.Forms.CheckBox();
+            this.chbx_order = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.chbx_location = new System.Windows.Forms.CheckBox();
+            this.chbx_zone = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
@@ -112,7 +116,7 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Location = new System.Drawing.Point(12, 93);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(899, 89);
+            this.groupBox2.Size = new System.Drawing.Size(899, 78);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Зазначте шлях до шаблону";
@@ -148,7 +152,7 @@
             // 
             // btn_generate
             // 
-            this.btn_generate.Location = new System.Drawing.Point(12, 310);
+            this.btn_generate.Location = new System.Drawing.Point(12, 334);
             this.btn_generate.Name = "btn_generate";
             this.btn_generate.Size = new System.Drawing.Size(135, 35);
             this.btn_generate.TabIndex = 2;
@@ -164,7 +168,7 @@
             this.gb_result.Controls.Add(this.btn_raport_open);
             this.gb_result.Controls.Add(this.txb_raport_path);
             this.gb_result.Controls.Add(this.label5);
-            this.gb_result.Location = new System.Drawing.Point(12, 351);
+            this.gb_result.Location = new System.Drawing.Point(12, 375);
             this.gb_result.Name = "gb_result";
             this.gb_result.Size = new System.Drawing.Size(899, 121);
             this.gb_result.TabIndex = 3;
@@ -254,6 +258,10 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chbx_zone);
+            this.groupBox3.Controls.Add(this.chbx_location);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.chbx_order);
             this.groupBox3.Controls.Add(this.chbx_reloadDb);
             this.groupBox3.Controls.Add(this.lb_reloadDb);
             this.groupBox3.Controls.Add(this.nmb_zoom);
@@ -262,12 +270,33 @@
             this.groupBox3.Controls.Add(this.dt_StartDate);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Location = new System.Drawing.Point(12, 188);
+            this.groupBox3.Location = new System.Drawing.Point(12, 177);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(899, 116);
+            this.groupBox3.Size = new System.Drawing.Size(899, 151);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Параметри";
+            // 
+            // chbx_reloadDb
+            // 
+            this.chbx_reloadDb.AutoSize = true;
+            this.chbx_reloadDb.Location = new System.Drawing.Point(753, 65);
+            this.chbx_reloadDb.Name = "chbx_reloadDb";
+            this.chbx_reloadDb.Size = new System.Drawing.Size(22, 21);
+            this.chbx_reloadDb.TabIndex = 15;
+            this.chbx_reloadDb.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chbx_reloadDb.UseVisualStyleBackColor = true;
+            this.chbx_reloadDb.Visible = false;
+            // 
+            // lb_reloadDb
+            // 
+            this.lb_reloadDb.AutoSize = true;
+            this.lb_reloadDb.Location = new System.Drawing.Point(559, 66);
+            this.lb_reloadDb.Name = "lb_reloadDb";
+            this.lb_reloadDb.Size = new System.Drawing.Size(179, 20);
+            this.lb_reloadDb.TabIndex = 14;
+            this.lb_reloadDb.Text = "Перезавантажити БД:";
+            this.lb_reloadDb.Visible = false;
             // 
             // nmb_zoom
             // 
@@ -305,7 +334,7 @@
             // 
             this.dt_EndDate.Location = new System.Drawing.Point(152, 61);
             this.dt_EndDate.Name = "dt_EndDate";
-            this.dt_EndDate.Size = new System.Drawing.Size(316, 26);
+            this.dt_EndDate.Size = new System.Drawing.Size(356, 26);
             this.dt_EndDate.TabIndex = 11;
             this.dt_EndDate.ValueChanged += new System.EventHandler(this.dt_EndDate_ValueChanged);
             // 
@@ -313,7 +342,7 @@
             // 
             this.dt_StartDate.Location = new System.Drawing.Point(152, 26);
             this.dt_StartDate.Name = "dt_StartDate";
-            this.dt_StartDate.Size = new System.Drawing.Size(316, 26);
+            this.dt_StartDate.Size = new System.Drawing.Size(356, 26);
             this.dt_StartDate.TabIndex = 10;
             this.dt_StartDate.ValueChanged += new System.EventHandler(this.dt_StartDate_ValueChanged);
             // 
@@ -335,26 +364,49 @@
             this.label7.TabIndex = 8;
             this.label7.Text = "Дата Початку:";
             // 
-            // lb_reloadDb
+            // chbx_order
             // 
-            this.lb_reloadDb.AutoSize = true;
-            this.lb_reloadDb.Location = new System.Drawing.Point(559, 66);
-            this.lb_reloadDb.Name = "lb_reloadDb";
-            this.lb_reloadDb.Size = new System.Drawing.Size(179, 20);
-            this.lb_reloadDb.TabIndex = 14;
-            this.lb_reloadDb.Text = "Перезавантажити БД:";
-            this.lb_reloadDb.Visible = false;
+            this.chbx_order.AutoSize = true;
+            this.chbx_order.Checked = true;
+            this.chbx_order.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chbx_order.Enabled = false;
+            this.chbx_order.Location = new System.Drawing.Point(152, 112);
+            this.chbx_order.Name = "chbx_order";
+            this.chbx_order.Size = new System.Drawing.Size(119, 24);
+            this.chbx_order.TabIndex = 16;
+            this.chbx_order.Text = "по Наказах";
+            this.chbx_order.UseVisualStyleBackColor = true;
             // 
-            // chbx_reloadDb
+            // label8
             // 
-            this.chbx_reloadDb.AutoSize = true;
-            this.chbx_reloadDb.Location = new System.Drawing.Point(753, 65);
-            this.chbx_reloadDb.Name = "chbx_reloadDb";
-            this.chbx_reloadDb.Size = new System.Drawing.Size(22, 21);
-            this.chbx_reloadDb.TabIndex = 15;
-            this.chbx_reloadDb.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chbx_reloadDb.UseVisualStyleBackColor = true;
-            this.chbx_reloadDb.Visible = false;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 113);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(118, 20);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Звіт-діаграми:";
+            // 
+            // chbx_location
+            // 
+            this.chbx_location.AutoSize = true;
+            this.chbx_location.Location = new System.Drawing.Point(277, 112);
+            this.chbx_location.Name = "chbx_location";
+            this.chbx_location.Size = new System.Drawing.Size(123, 24);
+            this.chbx_location.TabIndex = 18;
+            this.chbx_location.Text = "по Локаціях";
+            this.chbx_location.UseVisualStyleBackColor = true;
+            this.chbx_location.CheckedChanged += new System.EventHandler(this.chbx_location_CheckedChanged);
+            // 
+            // chbx_zone
+            // 
+            this.chbx_zone.AutoSize = true;
+            this.chbx_zone.Location = new System.Drawing.Point(406, 112);
+            this.chbx_zone.Name = "chbx_zone";
+            this.chbx_zone.Size = new System.Drawing.Size(102, 24);
+            this.chbx_zone.TabIndex = 19;
+            this.chbx_zone.Text = "по Зонах";
+            this.chbx_zone.UseVisualStyleBackColor = true;
+            this.chbx_zone.CheckedChanged += new System.EventHandler(this.chbx_zone_CheckedChanged);
             // 
             // MainForm
             // 
@@ -417,6 +469,10 @@
         private System.Windows.Forms.NumericUpDown nmb_zoom;
         private System.Windows.Forms.CheckBox chbx_reloadDb;
         private System.Windows.Forms.Label lb_reloadDb;
+        private System.Windows.Forms.CheckBox chbx_order;
+        private System.Windows.Forms.CheckBox chbx_zone;
+        private System.Windows.Forms.CheckBox chbx_location;
+        private System.Windows.Forms.Label label8;
     }
 }
 
