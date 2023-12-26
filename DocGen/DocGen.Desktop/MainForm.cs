@@ -101,7 +101,7 @@ namespace DocGen.Desktop
         }
         private void progressUpdated_EventHandler(int percentage, string message = null)
         {
-            progressBar.Value = percentage;
+            progressBar.Value = (( percentage > 100 ) ? 100 : percentage);
             if (!string.IsNullOrWhiteSpace(message))
             {
                 lb_progress.Text = $"{percentage}% - {message}";

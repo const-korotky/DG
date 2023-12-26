@@ -54,15 +54,31 @@ namespace DocGen.Processor
 
         public void GenerateReport(WordDocument doc)
         {
-            Table table = doc.Tables[1];
+            Table table;
+            if (doc.Tables.Count > 0)
+            {
+                table = doc.Tables[1];
+                PopulateZone(table, 30);
+            }
+            if (doc.Tables.Count > 1)
+            {
+                table = doc.Tables[2];
+                PopulateZone(table, 100);
+            }
+        }
+
+        private void PopulateZone(Table table, double zone)
+        {
+            List<DateTimeInterval> intervals;
             var rowIndex = 2;
 
             foreach (var person in Datastore.Person)
             {
-                int totalDays = GetTotalDays(person);
+                intervals = GetZoneIntervals(person, zone);
+                int totalDays = GetTotalDays(intervals);
                 if (totalDays > 0)
                 {
-                    PopulateTableRow(table, rowIndex, person, totalDays);
+                    PopulateTableRow(table, rowIndex, person, intervals, totalDays);
                     table.Rows.Add();
                     ++rowIndex;
                 }
@@ -76,6 +92,7 @@ namespace DocGen.Processor
             ( Table table
             , int rowIndex
             , Person person
+            , List<DateTimeInterval> intervals
             , int totalDays
             ) {
             Range cell;
@@ -92,7 +109,7 @@ namespace DocGen.Processor
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
 
             cell = table.Cell(rowIndex, 4).Range;
-            cell.Text = FormatTotalIntervals(person);
+            cell.Text = FormatTotalIntervals(intervals);
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
 
             cell = table.Cell(rowIndex, 5).Range;
@@ -100,23 +117,20 @@ namespace DocGen.Processor
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
 
             cell = table.Cell(rowIndex, 6).Range;
-            cell.Text = FormatTotalOrders(person);
+            cell.Text = FormatTotalOrders(intervals);
             cell.Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
         }
 
-        protected static int GetTotalDays(Person person)
+        protected static int GetTotalDays(List<DateTimeInterval> intervals)
         {
-            return person
-                   .Normalized
-                   .Where(interval => !interval.IsInactive)
-                   .Sum(interval => interval.Days);
+            return intervals.Sum(interval => interval.Days);
         }
-        protected static string FormatTotalIntervals(Person person, bool full = false)
+        protected static string FormatTotalIntervals(List<DateTimeInterval> intervals, bool full = false)
         {
             string res = string.Empty;
             int intervalDays;
 
-            foreach (var interval in person.Normalized.Where(i => !i.IsInactive))
+            foreach (var interval in intervals)
             {
                 intervalDays = interval.Days;
                 if (full)
@@ -138,10 +152,10 @@ namespace DocGen.Processor
             }
             return res.TrimEnd();
         }
-        protected static string FormatTotalOrders(Person person)
+        protected static string FormatTotalOrders(List<DateTimeInterval> intervals)
         {
             var orders = new Dictionary<string, List<string>>();
-            foreach (var interval in person.Normalized.Where(i => !i.IsInactive))
+            foreach (var interval in intervals)
             {
                 AddOrder(interval, orders);
             }
@@ -176,6 +190,15 @@ namespace DocGen.Processor
                         i => $"{i.Key}, {string.Join(", ", i.Value)}".TrimEnd(',', ' ')
                         )
                 );
+        }
+
+        private static List<DateTimeInterval> GetZoneIntervals(Person person, double zone)
+        {
+            return person
+                   .Normalized
+                   .Where(interval => !interval.IsInactive)
+                   .Where(interval => ( interval.Zone != null )&&( interval.Zone.Value == zone ))
+                   .ToList();
         }
     }
 }
