@@ -140,11 +140,19 @@ namespace DocGen.Data
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
-                var interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
+                DateTimeInterval interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
                 if (interval == null)
                 {
                     continue;
                 }
+
+                // NOTE: HAS TO BE CLARIFIED
+                if (!endDate.HasValue || (endDate.Value != interval.EndDate))
+                {
+                    interval.EndDate = interval.EndDate.AddDays(-1);
+                }
+                // NOTE: HAS TO BE CLARIFIED
+
                 interval.IsInactive = true;
                 interval.Description = TrimDataString(cells[3].Value);
 
@@ -165,7 +173,7 @@ namespace DocGen.Data
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
-                var interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
+                DateTimeInterval interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
                 if (interval == null)
                 {
                     continue;
@@ -195,15 +203,33 @@ namespace DocGen.Data
                 }
 
                 var personNames = (TrimDataString(cells[3].Value) as string).Split(',');
-                foreach(var personName in personNames)
+                if (( personNames.Length == 1 )&&( personNames[0] == "ALL (КП)"))
                 {
-                    var person = Person.FirstOrDefault(i => i.Name == personName.Trim());
-                    if (person != null)
+                    interval.IsGeneral = true;
+                    foreach(var person in Person.Where(i => i.Company == "КП"))
                     {
                         person.Sector.Add(interval);
                     }
                 }
-
+                else if (( personNames.Length == 1 )&&( personNames[0] == "ALL (ТКП)"))
+                {
+                    interval.IsGeneral = true;
+                    foreach (var person in Person.Where(i => i.Company == "ТКП"))
+                    {
+                        person.Sector.Add(interval);
+                    }
+                }
+                else
+                {
+                    foreach (var personName in personNames)
+                    {
+                        var person = Person.FirstOrDefault(i => i.Name == personName.Trim());
+                        if (person != null)
+                        {
+                            person.Sector.Add(interval);
+                        }
+                    }
+                }
                 IncrementProgressBy(0.05);
                 Console.WriteLine($"{interval}");
             }
@@ -235,16 +261,16 @@ namespace DocGen.Data
                     ? !readEndDate.HasValue
                         ? endDate.Value
                         : (readEndDate.Value < endDate.Value)
-                            ? readEndDate.Value
+                            ? readEndDate.Value.AddDays(1)
                             : endDate.Value
                     : !readEndDate.HasValue
-                        ? DateTime.Today
-                        : readEndDate.Value;
+                        ? DateTime.Today.AddDays(1)
+                        : readEndDate.Value.AddDays(1);
 
             return new DateTimeInterval
             {
                 StartDate = intervalStartDate,
-                EndDate = intervalEndDate.AddDays(1),
+                EndDate = intervalEndDate,
             };
         }
 

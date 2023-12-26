@@ -8,6 +8,8 @@ namespace DocGen.Data.Model
 {
     public class DateTimeInterval : Entity
     {
+        public bool IsGeneral { get; set; }
+
         public Order Order { get; set; }
         public Location Location { get; set; }
         public Zone Zone { get; set; }

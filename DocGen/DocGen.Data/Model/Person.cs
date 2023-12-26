@@ -37,6 +37,7 @@ namespace DocGen.Data.Model
             Normalized.Add(
                 new DateTimeInterval {
                     ID = interval.ID,
+                    IsGeneral = interval.IsGeneral,
                     Order = interval.Order,
                     Location = interval.Location,
                     Zone = interval.Zone,

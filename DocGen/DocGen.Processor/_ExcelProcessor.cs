@@ -203,7 +203,12 @@ namespace DocGen.Processor
             {
                 return;
             }
-            cell.Value = interval.Location?.CodeName;
+            person.Normalize(interval, date);
+            if (interval.IsGeneral == true)
+            {
+                return;
+            }
+            cell.Value = ((interval.Location == null) ? "_____" : interval.Location.CodeName);
             AddComment(cell, interval);
             var select = SelectPrintOptionColor(interval, printOption);
             if (select != null)
@@ -211,12 +216,11 @@ namespace DocGen.Processor
                 cell.Interior.Color = select.Color;
                 cell.Font.ColorIndex = select.FontColor;
             }
-            person.Normalize(interval, date);
         }
         private static void PrintNormalizedDate(Range cell, Person person, DateTime date, PrintOption printOption)
         {
             var interval = SelectDateTimeInterval(person.Normalized, date);
-            if (interval == null)
+            if (( interval == null )||( interval.IsGeneral == true ))
             {
                 return;
             }
@@ -227,7 +231,7 @@ namespace DocGen.Processor
             }
             else
             {
-                cell.Value = interval.Location?.CodeName;
+                cell.Value = ((interval.Location == null) ? "_____" : interval.Location.CodeName);
                 AddComment(cell, interval);
                 var select = SelectPrintOptionColor(interval, printOption);
                 if (select != null)
