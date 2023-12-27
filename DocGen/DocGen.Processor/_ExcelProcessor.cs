@@ -14,7 +14,7 @@ namespace DocGen.Processor
 {
     public class _ExcelProcessor : BaseProcessor
     {
-        public PrintOption PrintOptions { get; set; }
+        public PrintOption PrintOptions { get; set; } = PrintOption.Order;
         public int PrintScale { get; set; } = 100;
 
         public DateTime StartDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
