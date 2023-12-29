@@ -40,7 +40,7 @@ namespace DocGen.Processor
                 word.Quit();
                 UpdateProgress(99, "Рапорт збережено.");
             }
-            catch (Exception e) { }
+            catch (Exception) { }
             catch { }
             finally
             {

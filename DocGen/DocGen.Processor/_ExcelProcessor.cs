@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 
 using Microsoft.Office.Interop.Excel;
@@ -37,6 +39,7 @@ namespace DocGen.Processor
 
                 UpdateProgress(1, "Завантаження бази даних....");
                 LoadDatastore(workbook, reloadDatastore);
+                //UpdateInactive(excel);
                 UpdateProgress(15, "Завантаження бази даних завершено.");
 
                 UpdateProgress(15, "Генерація діаграми....");
@@ -50,7 +53,7 @@ namespace DocGen.Processor
                 excel.Quit();
                 UpdateProgress(71, "Діаграму збережено.");
             }
-            catch (Exception e) { }
+            catch (Exception) { }
             catch { }
             finally
             {
@@ -62,7 +65,7 @@ namespace DocGen.Processor
             }
         }
 
-        #region Load Datastore
+        #region Load/Update Datastore
 
         public void LoadDatastore(Workbook workbook, bool reload = false)
         {
@@ -73,7 +76,59 @@ namespace DocGen.Processor
             }
         }
 
-        #endregion Load Datastore
+        public void UpdateInactive(ExcelApplication excel)
+        {
+            const string url = @"https://drive.google.com/uc?id=1R_1OYK2GY3sZDnfRLHz9Qc0nX_hPG1CZ&export=download";
+            string filePath = Path.Combine(Environment.CurrentDirectory, $"Inactive{DateTime.Now.Ticks}.xlsx");
+
+            var file = DownloadFile(url, filePath);
+            if (!file.Exists || (file.Length <= 0))
+            {
+                return;
+            }
+            Workbook workbook = null;
+            try
+            {
+                workbook = excel.Workbooks.Open(file.FullName);
+                Datastore.UpdateInactive(workbook);
+            }
+            catch { }
+            finally
+            {
+                if (workbook != null)
+                {
+                    Marshal.FinalReleaseComObject(workbook);
+                }
+                Marshal.FinalReleaseComObject(excel);
+            }
+
+        }
+
+        private static FileInfo DownloadFile(string url, string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                using (var webClient = new WebClient())
+                {
+                    webClient.DownloadFile(url, filePath);
+                    return new FileInfo(filePath);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        #endregion Load/Update Datastore
 
         #region Print
 

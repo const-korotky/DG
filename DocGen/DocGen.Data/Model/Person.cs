@@ -66,4 +66,17 @@ namespace DocGen.Data.Model
             return $"Person [Name: {Name}][Rank: {Rank}][Company: {Company}]";
         }
     }
+
+    public class PersonStatusRecord
+    {
+        public string PersonName { get; set; }
+        public PersonStatus PersonStatus { get; set; }
+        public DateTime StartDate { get; set; }
+    }
+
+    public enum PersonStatus
+    {
+        Active,
+        Inactive,
+    }
 }

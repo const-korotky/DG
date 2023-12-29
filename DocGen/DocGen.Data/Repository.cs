@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DocGen.Data.Model;
+
 using Microsoft.Office.Interop.Excel;
+
+using DocGen.Data.Model;
 
 namespace DocGen.Data
 {
@@ -277,6 +279,70 @@ namespace DocGen.Data
         public static string TrimDataString(string data)
         {
             return (string.IsNullOrWhiteSpace(data) ? string.Empty : data.Trim());
+        }
+
+        /*private static void UploadData(Workbook workbook)
+        {
+            Range table = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE");
+            Range firstRow = table.Rows.Cast<Range>().FirstOrDefault();
+            if (firstRow != null)
+            {
+                firstRow.Insert(XlInsertShiftDirection.xlShiftDown);
+                firstRow.Insert(XlInsertShiftDirection.xlShiftDown);
+
+                var cells = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().First().Cells.Cast<Range>().ToList();
+
+                cells[0].Value = "ЦИГАНОВА Людмила Федорівна";
+                cells[1].Value = DateTime.Today;
+                cells[2].Value = DateTime.Today.AddDays(1);
+                cells[3].Value = "Відпустка FFFF";
+            }
+        }*/
+
+        public void UpdateInactive(Workbook workbook)
+        {
+            Worksheet worksheet = workbook.Sheets["СТАТУС"];
+            worksheet.Activate();
+
+            int rowIndex = 2;
+            Range cell;
+
+            var records = new List<PersonStatusRecord>();
+            do
+            {
+                var record = new PersonStatusRecord();
+
+                cell = worksheet.Cells[rowIndex, 1];
+                var name = TrimDataString(cell.Value);
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    break;
+                }
+                record.PersonName = name;
+
+                cell = worksheet.Cells[rowIndex, 2];
+                var status = TrimDataString(cell.Value);
+                if (status == "Заведений")
+                {
+                    record.PersonStatus = PersonStatus.Active;
+                }
+                else if (status == "Виведений")
+                {
+                    record.PersonStatus = PersonStatus.Inactive;
+                }
+                else break;
+
+                cell = worksheet.Cells[rowIndex, 3];
+                DateTime? startDate = cell.Value;
+                if (!startDate.HasValue)
+                {
+                    break;
+                }
+                record.StartDate = startDate.Value;
+
+                records.Add(record);
+            }
+            while (++rowIndex < 10000);
         }
     }
 }
