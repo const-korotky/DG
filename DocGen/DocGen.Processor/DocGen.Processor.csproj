@@ -50,8 +50,8 @@
   <ItemGroup>
     <Compile Include="Enums.cs" />
     <Compile Include="BaseProcessor.cs" />
-    <Compile Include="_WordProcessor.cs" />
-    <Compile Include="_ExcelProcessor.cs" />
+    <Compile Include="WordProcessor.cs" />
+    <Compile Include="ExcelProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

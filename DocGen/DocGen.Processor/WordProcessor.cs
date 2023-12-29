@@ -12,7 +12,7 @@ using DocGen.Data.Model;
 
 namespace DocGen.Processor
 {
-    public class _WordProcessor : BaseProcessor
+    public class WordProcessor : BaseProcessor
     {
         public override void OpenDocumnet(string filePath)
         {

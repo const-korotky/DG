@@ -19,15 +19,15 @@ namespace DocGen.Desktop
         public const string WordFileExtentionFilter = "Word files (*.doc; *.docx)|*.doc; *.docx|All files (*.*)|*.*";
         public const string ExcelFileExtentionFilter = "Excel files (*.xls; *.xlsx; *.xlsm)|*.xls; *.xlsx; *.xlsm|All files (*.*)|*.*";
 
-        private readonly _ExcelProcessor ExcelProcessor;
-        private readonly _WordProcessor WordProcessor;
+        private readonly ExcelProcessor ExcelProcessor;
+        private readonly WordProcessor WordProcessor;
 
         public MainForm()
         {
             InitializeComponent();
 
-            ExcelProcessor = new _ExcelProcessor();
-            WordProcessor = new _WordProcessor();
+            ExcelProcessor = new ExcelProcessor();
+            WordProcessor = new WordProcessor();
         }
 
         private void MainForm_Load(object sender, EventArgs e)

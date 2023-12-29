@@ -14,7 +14,7 @@ using DocGen.Data.Model;
 
 namespace DocGen.Processor
 {
-    public class _ExcelProcessor : BaseProcessor
+    public class ExcelProcessor : BaseProcessor
     {
         public PrintOption PrintOptions { get; set; } = PrintOption.Order;
         public int PrintScale { get; set; } = 100;

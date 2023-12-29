@@ -14,7 +14,7 @@ namespace DocGen.Console
                 return 1;
             }
             var startDate = new DateTime(2023, 8, 1);
-            var excelProcessor = new _ExcelProcessor()
+            var excelProcessor = new ExcelProcessor()
             {
                 SourceFilePath = excelFilePath,
                 PrintOptions = (PrintOption.Order|PrintOption.Location|PrintOption.Zone),
@@ -26,7 +26,7 @@ namespace DocGen.Console
 
             if (GetFilePath(args, 2, out string wordFilePath))
             {
-                var wordProcessor = new _WordProcessor()
+                var wordProcessor = new WordProcessor()
                 {
                     SourceFilePath = wordFilePath,
                     Datastore = excelProcessor.Datastore,
