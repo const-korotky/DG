@@ -350,7 +350,7 @@ namespace DocGen.Data
             while (emptyRowCount < 4);
         }
 
-        public void SavePersonStatusRecords(Workbook workbook)
+        public void GenerateInactiveIntervals(Workbook workbook)
         {
             GroupRecordsByPerson
                 ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals

@@ -76,7 +76,7 @@ namespace DocGen.Processor
                 Datastore = new Datastore(IncrementProgressBy);
             }
             LoadPersonStatusRecords(excel);
-            Datastore.SavePersonStatusRecords(workbook);
+            Datastore.GenerateInactiveIntervals(workbook);
             if (!Datastore.IsLoaded || reload)
             {
                 Datastore.Load(workbook, StartDate, EndDate);
