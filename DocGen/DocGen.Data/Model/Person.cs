@@ -72,11 +72,12 @@ namespace DocGen.Data.Model
         public string PersonName { get; set; }
         public PersonStatus PersonStatus { get; set; }
         public DateTime StartDate { get; set; }
+        public string Note { get; set; }
     }
 
     public enum PersonStatus
     {
-        Active,
-        Inactive,
+        Attached = 1,
+        Detached = 2,
     }
 }

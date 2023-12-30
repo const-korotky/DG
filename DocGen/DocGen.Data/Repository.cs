@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.Office.Interop.Excel;
-
 using DocGen.Data.Model;
 
 namespace DocGen.Data
@@ -15,6 +13,8 @@ namespace DocGen.Data
 
         public bool IsLoaded { get; protected set; }
         public bool IsNormalized { get; set; }
+
+        protected readonly List<PersonStatusRecord> PersonStatusRecords;
 
         public readonly List<Person> Person;
         public readonly List<Location> Location;
@@ -29,6 +29,8 @@ namespace DocGen.Data
             Location = new List<Location>();
             Zone = new List<Zone>();
             Order = new List<Order>();
+
+            PersonStatusRecords = new List<PersonStatusRecord>();
         }
 
         public void Load(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
@@ -147,13 +149,6 @@ namespace DocGen.Data
                 {
                     continue;
                 }
-
-                // NOTE: HAS TO BE CLARIFIED
-                if (!endDate.HasValue || (endDate.Value != interval.EndDate))
-                {
-                    interval.EndDate = interval.EndDate.AddDays(-1);
-                }
-                // NOTE: HAS TO BE CLARIFIED
 
                 interval.IsInactive = true;
                 interval.Description = TrimDataString(cells[3].Value);
@@ -280,6 +275,12 @@ namespace DocGen.Data
         {
             return (string.IsNullOrWhiteSpace(data) ? string.Empty : data.Trim());
         }
+        public static DateTime? GetNullableDateTime(DateTime data, DateTime check)
+        {
+            if (data == check) {
+                return null;
+            } return data;
+        }
 
         /*private static void UploadData(Workbook workbook)
         {
@@ -299,15 +300,14 @@ namespace DocGen.Data
             }
         }*/
 
-        public void UpdateInactive(Workbook workbook)
+        public void LoadPersonStatusRecords(Workbook workbook)
         {
             Worksheet worksheet = workbook.Sheets["СТАТУС"];
-            worksheet.Activate();
 
+            int emptyRowCount = 0;
             int rowIndex = 2;
             Range cell;
 
-            var records = new List<PersonStatusRecord>();
             do
             {
                 var record = new PersonStatusRecord();
@@ -316,7 +316,13 @@ namespace DocGen.Data
                 var name = TrimDataString(cell.Value);
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    break;
+                    ++emptyRowCount;
+                    ++rowIndex;
+                    continue;
+                }
+                else
+                {
+                    emptyRowCount = 0;
                 }
                 record.PersonName = name;
 
@@ -324,25 +330,127 @@ namespace DocGen.Data
                 var status = TrimDataString(cell.Value);
                 if (status == "Заведений")
                 {
-                    record.PersonStatus = PersonStatus.Active;
+                    record.PersonStatus = PersonStatus.Attached;
                 }
                 else if (status == "Виведений")
                 {
-                    record.PersonStatus = PersonStatus.Inactive;
+                    record.PersonStatus = PersonStatus.Detached;
                 }
-                else break;
 
                 cell = worksheet.Cells[rowIndex, 3];
                 DateTime? startDate = cell.Value;
-                if (!startDate.HasValue)
-                {
-                    break;
-                }
-                record.StartDate = startDate.Value;
+                record.StartDate = startDate ?? DateTime.Today;
 
-                records.Add(record);
+                cell = worksheet.Cells[rowIndex, 4];
+                record.Note = TrimDataString(cell.Value);
+
+                PersonStatusRecords.Add(record);
+                ++rowIndex;
             }
-            while (++rowIndex < 10000);
+            while (emptyRowCount < 4);
+        }
+
+        public void SavePersonStatusRecords(Workbook workbook)
+        {
+            GroupRecordsByPerson
+                ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals
+                , out Dictionary<string, List<PersonStatusRecord>> recordsDictionary
+                );
+            ComposePersonInactiveIntervals
+                ( recordsDictionary
+                , inactiveIntervals
+                );
+            PopulatePersonInactiveIntervals(workbook, inactiveIntervals);
+            PersonStatusRecords.Clear();
+        }
+
+        private void PopulatePersonInactiveIntervals
+            ( Workbook workbook
+            , Dictionary<string, List<DateTimeInterval>> inactiveIntervals
+            ) {
+            Range row = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().FirstOrDefault();
+            if (row == null)
+            {
+                return;
+            }
+            foreach (var entry in inactiveIntervals)
+            {
+                var personName = entry.Key;
+
+                foreach (var interval in entry.Value)
+                {
+                    var cells = row.Cells.Cast<Range>().ToList();
+
+                    cells[0].Value = personName;
+                    cells[1].Value = GetNullableDateTime(interval.StartDate, DateTime.MinValue);
+                    cells[2].Value = GetNullableDateTime(interval.EndDate, DateTime.MaxValue);
+                    cells[3].Value = interval.Note;
+
+                    row.Insert(XlInsertShiftDirection.xlShiftDown);
+                    row = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().First();
+                }
+            }
+        }
+
+        private static void ComposePersonInactiveIntervals
+            ( Dictionary<string, List<PersonStatusRecord>> recordsDictionary
+            , Dictionary<string, List<DateTimeInterval>> inactiveIntervals
+            ) {
+            foreach (var entry in recordsDictionary)
+            {
+                var records = entry.Value.OrderBy(i => i.StartDate).ThenBy(i => i.PersonStatus).ToList();
+                foreach (var record in records)
+                {
+                    if (record.PersonStatus == PersonStatus.Attached)
+                    {
+                        var intervals = inactiveIntervals[record.PersonName];
+                        if (intervals.Count < 1)
+                        {
+                            intervals.Add(
+                                new DateTimeInterval()
+                                {
+                                    StartDate = DateTime.MinValue,
+                                    EndDate = record.StartDate.AddDays(-1),
+                                });
+                        }
+                        else
+                        {
+                            intervals.Last().EndDate = record.StartDate.AddDays(-1);
+                        }
+                    }
+                    else if (record.PersonStatus == PersonStatus.Detached)
+                    {
+                        var intervals = inactiveIntervals[record.PersonName];
+                        intervals.Add(
+                            new DateTimeInterval()
+                            {
+                                Note = record.Note,
+                                StartDate = record.StartDate,
+                                EndDate = DateTime.MaxValue
+                            });
+                    }
+                }
+            }
+        }
+
+        private void GroupRecordsByPerson
+            ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals
+            , out Dictionary<string, List<PersonStatusRecord>> dictionary
+            ) {
+            inactiveIntervals = new Dictionary<string, List<DateTimeInterval>>();
+            dictionary = new Dictionary<string, List<PersonStatusRecord>>();
+            foreach (var record in PersonStatusRecords)
+            {
+                if (!dictionary.ContainsKey(record.PersonName))
+                {
+                    dictionary.Add(record.PersonName, new List<PersonStatusRecord>() { record });
+                    inactiveIntervals.Add(record.PersonName, new List<DateTimeInterval>());
+                }
+                else
+                {
+                    dictionary[record.PersonName].Add(record);
+                }
+            }
         }
     }
 }

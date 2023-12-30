@@ -12,10 +12,13 @@ using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using DocGen.Data;
 using DocGen.Data.Model;
 
+
 namespace DocGen.Processor
 {
     public class ExcelProcessor : BaseProcessor
     {
+        private const string URL_PERSON_STATUS = @"https://drive.google.com/uc?id=1R_1OYK2GY3sZDnfRLHz9Qc0nX_hPG1CZ&export=download";
+
         public PrintOption PrintOptions { get; set; } = PrintOption.Order;
         public int PrintScale { get; set; } = 100;
 
@@ -38,8 +41,7 @@ namespace DocGen.Processor
                 UpdateProgress(1, "База даних відкрита.");
 
                 UpdateProgress(1, "Завантаження бази даних....");
-                LoadDatastore(workbook, reloadDatastore);
-                //UpdateInactive(excel);
+                LoadDatastore(excel, workbook, reloadDatastore);
                 UpdateProgress(15, "Завантаження бази даних завершено.");
 
                 UpdateProgress(15, "Генерація діаграми....");
@@ -53,7 +55,7 @@ namespace DocGen.Processor
                 excel.Quit();
                 UpdateProgress(71, "Діаграму збережено.");
             }
-            catch (Exception) { }
+            catch (Exception e) { }
             catch { }
             finally
             {
@@ -67,21 +69,25 @@ namespace DocGen.Processor
 
         #region Load/Update Datastore
 
-        public void LoadDatastore(Workbook workbook, bool reload = false)
+        public void LoadDatastore(ExcelApplication excel, Workbook workbook, bool reload = false)
         {
-            if ((Datastore == null) || !Datastore.IsLoaded || reload)
+            if (Datastore == null)
             {
                 Datastore = new Datastore(IncrementProgressBy);
+            }
+            LoadPersonStatusRecords(excel);
+            Datastore.SavePersonStatusRecords(workbook);
+            if (!Datastore.IsLoaded || reload)
+            {
                 Datastore.Load(workbook, StartDate, EndDate);
             }
         }
 
-        public void UpdateInactive(ExcelApplication excel)
+        public void LoadPersonStatusRecords(ExcelApplication excel)
         {
-            const string url = @"https://drive.google.com/uc?id=1R_1OYK2GY3sZDnfRLHz9Qc0nX_hPG1CZ&export=download";
             string filePath = Path.Combine(Environment.CurrentDirectory, $"Inactive{DateTime.Now.Ticks}.xlsx");
 
-            var file = DownloadFile(url, filePath);
+            var file = DownloadFile(URL_PERSON_STATUS, filePath);
             if (!file.Exists || (file.Length <= 0))
             {
                 return;
@@ -90,8 +96,10 @@ namespace DocGen.Processor
             try
             {
                 workbook = excel.Workbooks.Open(file.FullName);
-                Datastore.UpdateInactive(workbook);
+                Datastore.LoadPersonStatusRecords(workbook);
+                workbook.Close();
             }
+            catch (Exception e) { }
             catch { }
             finally
             {
@@ -99,7 +107,6 @@ namespace DocGen.Processor
                 {
                     Marshal.FinalReleaseComObject(workbook);
                 }
-                Marshal.FinalReleaseComObject(excel);
             }
 
         }
@@ -108,24 +115,14 @@ namespace DocGen.Processor
         {
             try
             {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
                 using (var webClient = new WebClient())
                 {
                     webClient.DownloadFile(url, filePath);
                     return new FileInfo(filePath);
                 }
             }
-            catch (Exception)
-            {
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
+            catch (Exception e) { return null; }
+            catch { return null; }
         }
 
         #endregion Load/Update Datastore
