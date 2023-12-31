@@ -27,7 +27,7 @@ namespace DocGen.Processor
 
         public override void OpenDocumnet(string filePath)
         {
-            System.Diagnostics.Process.Start("excel", filePath);
+            System.Diagnostics.Process.Start("excel", $"\"{filePath}\"");
         }
 
         public override void Process(bool reloadDatastore = false)

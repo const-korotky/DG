@@ -16,7 +16,7 @@ namespace DocGen.Processor
     {
         public override void OpenDocumnet(string filePath)
         {
-            System.Diagnostics.Process.Start("winword", filePath);
+            System.Diagnostics.Process.Start("winword", $"\"{filePath}\"");
         }
 
         public override void Process(bool reloadDatastore = false)
