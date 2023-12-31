@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Office.Interop.Excel;
 using DocGen.Data.Model;
@@ -337,16 +338,25 @@ namespace DocGen.Data
                     record.PersonStatus = PersonStatus.Detached;
                 }
 
+                cell = worksheet.Cells[rowIndex, 3];
                 try
                 {
-                    cell = worksheet.Cells[rowIndex, 3];
                     DateTime? startDate = cell.Value;
                     record.StartDate = startDate ?? DateTime.Today;
                 }
                 catch
                 {
-                    ++rowIndex;
-                    continue;
+                    try
+                    {
+                        string value = TrimDataString(cell.Value);
+                        var startDate = DateTime.ParseExact(value, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        record.StartDate = startDate;
+                    }
+                    catch
+                    {
+                        ++rowIndex;
+                        continue;
+                    }
                 }
 
                 cell = worksheet.Cells[rowIndex, 4];
