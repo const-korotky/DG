@@ -337,9 +337,17 @@ namespace DocGen.Data
                     record.PersonStatus = PersonStatus.Detached;
                 }
 
-                cell = worksheet.Cells[rowIndex, 3];
-                DateTime? startDate = cell.Value;
-                record.StartDate = startDate ?? DateTime.Today;
+                try
+                {
+                    cell = worksheet.Cells[rowIndex, 3];
+                    DateTime? startDate = cell.Value;
+                    record.StartDate = startDate ?? DateTime.Today;
+                }
+                catch
+                {
+                    ++rowIndex;
+                    continue;
+                }
 
                 cell = worksheet.Cells[rowIndex, 4];
                 record.Note = TrimDataString(cell.Value);
@@ -350,7 +358,7 @@ namespace DocGen.Data
             while (emptyRowCount < 4);
         }
 
-        public void GenerateInactiveIntervals(Workbook workbook)
+        public void PopulateInactiveIntervals(Workbook workbook)
         {
             GroupRecordsByPerson
                 ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals

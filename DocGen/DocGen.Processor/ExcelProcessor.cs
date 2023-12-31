@@ -76,7 +76,7 @@ namespace DocGen.Processor
                 Datastore = new Datastore(IncrementProgressBy);
             }
             LoadPersonStatusRecords();
-            Datastore.GenerateInactiveIntervals(workbook);
+            Datastore.PopulateInactiveIntervals(workbook);
             if (!Datastore.IsLoaded || reload)
             {
                 Datastore.Load(workbook, StartDate, EndDate);
