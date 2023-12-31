@@ -41,7 +41,7 @@ namespace DocGen.Processor
                 UpdateProgress(1, "База даних відкрита.");
 
                 UpdateProgress(1, "Завантаження бази даних....");
-                LoadDatastore(excel, workbook, reloadDatastore);
+                LoadDatastore(workbook, reloadDatastore);
                 UpdateProgress(15, "Завантаження бази даних завершено.");
 
                 UpdateProgress(15, "Генерація діаграми....");
@@ -69,13 +69,13 @@ namespace DocGen.Processor
 
         #region Load/Update Datastore
 
-        public void LoadDatastore(ExcelApplication excel, Workbook workbook, bool reload = false)
+        public void LoadDatastore(Workbook workbook, bool reload = false)
         {
             if (Datastore == null)
             {
                 Datastore = new Datastore(IncrementProgressBy);
             }
-            LoadPersonStatusRecords(excel);
+            LoadPersonStatusRecords();
             Datastore.GenerateInactiveIntervals(workbook);
             if (!Datastore.IsLoaded || reload)
             {
@@ -83,7 +83,7 @@ namespace DocGen.Processor
             }
         }
 
-        public void LoadPersonStatusRecords(ExcelApplication excel)
+        public void LoadPersonStatusRecords()
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, $"Inactive{DateTime.Now.Ticks}.xlsx");
 
@@ -92,12 +92,13 @@ namespace DocGen.Processor
             {
                 return;
             }
+            ExcelApplication excel = new ExcelApplication();
             Workbook workbook = null;
             try
             {
                 workbook = excel.Workbooks.Open(file.FullName);
                 Datastore.LoadPersonStatusRecords(workbook);
-                workbook.Close();
+                workbook.Close(SaveChanges: false);
             }
             catch (Exception e) { }
             catch { }
@@ -107,8 +108,8 @@ namespace DocGen.Processor
                 {
                     Marshal.FinalReleaseComObject(workbook);
                 }
+                Marshal.FinalReleaseComObject(excel);
             }
-
         }
 
         private static FileInfo DownloadFile(string url, string filePath)
