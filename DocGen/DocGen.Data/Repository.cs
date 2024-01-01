@@ -44,6 +44,18 @@ namespace DocGen.Data
             LoadSector(GetTable(workbook, "СЕКТОР", "SECTOR"), startDate, endDate);
             IsLoaded = true;
         }
+        public void Reload(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            Person.Clear();
+            Location.Clear();
+            Zone.Clear();
+            Order.Clear();
+
+            IsNormalized = false;
+            IsLoaded = false;
+
+            Load(workbook, startDate, endDate);
+        }
 
         public static Range GetTable(Workbook workbook, string schemeName, string tableName)
         {

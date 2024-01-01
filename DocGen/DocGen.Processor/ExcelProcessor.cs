@@ -77,9 +77,13 @@ namespace DocGen.Processor
             }
             LoadPersonStatusRecords();
             Datastore.PopulateInactiveIntervals(workbook);
-            if (!Datastore.IsLoaded || reload)
+            if (!Datastore.IsLoaded)
             {
                 Datastore.Load(workbook, StartDate, EndDate);
+            }
+            else if (reload)
+            {
+                Datastore.Reload(workbook, StartDate, EndDate);
             }
         }
 
@@ -99,6 +103,7 @@ namespace DocGen.Processor
                 workbook = excel.Workbooks.Open(file.FullName);
                 Datastore.LoadPersonStatusRecords(workbook);
                 workbook.Close(SaveChanges: false);
+                excel.Quit();
             }
             catch (Exception e) { }
             catch { }
@@ -242,7 +247,7 @@ namespace DocGen.Processor
             if (interval != null)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
-                AddComment(cell, interval);
+                AddComment(cell, interval, date);
                 person.Normalize(interval, date);
                 return true;
             }
@@ -262,7 +267,7 @@ namespace DocGen.Processor
                 return;
             }
             cell.Value = ((interval.Location == null) ? "_____" : interval.Location.CodeName);
-            AddComment(cell, interval);
+            AddComment(cell, interval, date);
             var select = SelectPrintOptionColor(interval, printOption);
             if (select != null)
             {
@@ -280,12 +285,12 @@ namespace DocGen.Processor
             if (interval.IsInactive)
             {
                 cell.Interior.Pattern = XlPattern.xlPatternDown;
-                AddComment(cell, interval);
+                AddComment(cell, interval, date);
             }
             else
             {
                 cell.Value = ((interval.Location == null) ? "_____" : interval.Location.CodeName);
-                AddComment(cell, interval);
+                AddComment(cell, interval, date);
                 var select = SelectPrintOptionColor(interval, printOption);
                 if (select != null)
                 {
@@ -295,7 +300,7 @@ namespace DocGen.Processor
             }
         }
 
-        private static void AddComment(Range cell, DateTimeInterval interval)
+        private static void AddComment(Range cell, DateTimeInterval interval, DateTime date)
         {
             int row = (interval.ID + 1);
             if(interval.IsInactive)
@@ -308,16 +313,16 @@ namespace DocGen.Processor
             {
                 cell.Worksheet.Hyperlinks.Add(cell, $"#СЕКТОР!A{row}:H{row}");
             }
-            cell.AddComment(FormatComment(interval));
+            cell.AddComment(FormatComment(interval, date));
         }
-        private static string FormatComment(DateTimeInterval interval)
+        private static string FormatComment(DateTimeInterval interval, DateTime date)
         {
             var descr = interval.Description;
             var descrIsEmpty = string.IsNullOrWhiteSpace(descr);
 
             if (interval.IsInactive || (interval.Order == null))
             {
-                return (!descrIsEmpty ? descr : "N/A");
+                return (date.ToString("dd.MM.yyyy")+Environment.NewLine+(!descrIsEmpty ? descr : "N/A"));
             }
             if (descrIsEmpty)
             {
@@ -328,7 +333,7 @@ namespace DocGen.Processor
             {
                 descr = $" - {descr}";
             }
-            return $"{interval.Location?.Name}: {interval.Order.Name}{descr}";
+            return $"{date.ToString("dd.MM.yyyy")}{Environment.NewLine}{interval.Location?.Name}: {interval.Order.Name}{descr}";
         }
 
         private static void PrintFooter(Worksheet worksheet, double scale)
