@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Entity.cs" />
+    <Compile Include="Model\SectorItem.cs" />
     <Compile Include="Model\Location.cs" />
     <Compile Include="Model\DateTimeInterval.cs" />
     <Compile Include="Model\Zone.cs" />

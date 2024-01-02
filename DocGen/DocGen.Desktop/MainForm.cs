@@ -189,5 +189,10 @@ namespace DocGen.Desktop
             }
             return true;
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            (new SectorForm(ExcelProcessor.Datastore)).ShowDialog(this);
+        }
     }
 }

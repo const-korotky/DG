@@ -48,6 +48,10 @@
             this.lb_progress = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chbx_zone = new System.Windows.Forms.CheckBox();
+            this.chbx_location = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.chbx_order = new System.Windows.Forms.CheckBox();
             this.chbx_reloadDb = new System.Windows.Forms.CheckBox();
             this.lb_reloadDb = new System.Windows.Forms.Label();
             this.nmb_zoom = new System.Windows.Forms.NumericUpDown();
@@ -56,16 +60,15 @@
             this.dt_StartDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.chbx_order = new System.Windows.Forms.CheckBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.chbx_location = new System.Windows.Forms.CheckBox();
-            this.chbx_zone = new System.Windows.Forms.CheckBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
             this.gb_progress.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmb_zoom)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -73,7 +76,7 @@
             this.groupBox1.Controls.Add(this.btn_open_data);
             this.groupBox1.Controls.Add(this.txb_data);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 47);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(899, 75);
             this.groupBox1.TabIndex = 0;
@@ -114,7 +117,7 @@
             this.groupBox2.Controls.Add(this.btn_open_templ);
             this.groupBox2.Controls.Add(this.txb_templ);
             this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Location = new System.Drawing.Point(12, 93);
+            this.groupBox2.Location = new System.Drawing.Point(12, 128);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(899, 78);
             this.groupBox2.TabIndex = 1;
@@ -152,7 +155,7 @@
             // 
             // btn_generate
             // 
-            this.btn_generate.Location = new System.Drawing.Point(12, 334);
+            this.btn_generate.Location = new System.Drawing.Point(12, 369);
             this.btn_generate.Name = "btn_generate";
             this.btn_generate.Size = new System.Drawing.Size(135, 35);
             this.btn_generate.TabIndex = 2;
@@ -168,7 +171,7 @@
             this.gb_result.Controls.Add(this.btn_raport_open);
             this.gb_result.Controls.Add(this.txb_raport_path);
             this.gb_result.Controls.Add(this.label5);
-            this.gb_result.Location = new System.Drawing.Point(12, 375);
+            this.gb_result.Location = new System.Drawing.Point(12, 410);
             this.gb_result.Name = "gb_result";
             this.gb_result.Size = new System.Drawing.Size(899, 121);
             this.gb_result.TabIndex = 3;
@@ -232,7 +235,7 @@
             // 
             this.gb_progress.Controls.Add(this.lb_progress);
             this.gb_progress.Controls.Add(this.progressBar);
-            this.gb_progress.Location = new System.Drawing.Point(12, 572);
+            this.gb_progress.Location = new System.Drawing.Point(12, 607);
             this.gb_progress.Name = "gb_progress";
             this.gb_progress.Size = new System.Drawing.Size(899, 80);
             this.gb_progress.TabIndex = 4;
@@ -270,12 +273,56 @@
             this.groupBox3.Controls.Add(this.dt_StartDate);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Location = new System.Drawing.Point(12, 177);
+            this.groupBox3.Location = new System.Drawing.Point(12, 212);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(899, 151);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Параметри";
+            // 
+            // chbx_zone
+            // 
+            this.chbx_zone.AutoSize = true;
+            this.chbx_zone.Location = new System.Drawing.Point(406, 112);
+            this.chbx_zone.Name = "chbx_zone";
+            this.chbx_zone.Size = new System.Drawing.Size(102, 24);
+            this.chbx_zone.TabIndex = 19;
+            this.chbx_zone.Text = "по Зонах";
+            this.chbx_zone.UseVisualStyleBackColor = true;
+            this.chbx_zone.CheckedChanged += new System.EventHandler(this.chbx_zone_CheckedChanged);
+            // 
+            // chbx_location
+            // 
+            this.chbx_location.AutoSize = true;
+            this.chbx_location.Location = new System.Drawing.Point(277, 112);
+            this.chbx_location.Name = "chbx_location";
+            this.chbx_location.Size = new System.Drawing.Size(123, 24);
+            this.chbx_location.TabIndex = 18;
+            this.chbx_location.Text = "по Локаціях";
+            this.chbx_location.UseVisualStyleBackColor = true;
+            this.chbx_location.CheckedChanged += new System.EventHandler(this.chbx_location_CheckedChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 113);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(118, 20);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Звіт-діаграми:";
+            // 
+            // chbx_order
+            // 
+            this.chbx_order.AutoSize = true;
+            this.chbx_order.Checked = true;
+            this.chbx_order.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chbx_order.Enabled = false;
+            this.chbx_order.Location = new System.Drawing.Point(152, 112);
+            this.chbx_order.Name = "chbx_order";
+            this.chbx_order.Size = new System.Drawing.Size(119, 24);
+            this.chbx_order.TabIndex = 16;
+            this.chbx_order.Text = "по Наказах";
+            this.chbx_order.UseVisualStyleBackColor = true;
             // 
             // chbx_reloadDb
             // 
@@ -364,63 +411,40 @@
             this.label7.TabIndex = 8;
             this.label7.Text = "Дата Початку:";
             // 
-            // chbx_order
+            // menuStrip1
             // 
-            this.chbx_order.AutoSize = true;
-            this.chbx_order.Checked = true;
-            this.chbx_order.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chbx_order.Enabled = false;
-            this.chbx_order.Location = new System.Drawing.Point(152, 112);
-            this.chbx_order.Name = "chbx_order";
-            this.chbx_order.Size = new System.Drawing.Size(119, 24);
-            this.chbx_order.TabIndex = 16;
-            this.chbx_order.Text = "по Наказах";
-            this.chbx_order.UseVisualStyleBackColor = true;
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(923, 36);
+            this.menuStrip1.TabIndex = 7;
+            this.menuStrip1.Text = "menuStrip1";
             // 
-            // label8
+            // toolStripMenuItem1
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 113);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(118, 20);
-            this.label8.TabIndex = 17;
-            this.label8.Text = "Звіт-діаграми:";
-            // 
-            // chbx_location
-            // 
-            this.chbx_location.AutoSize = true;
-            this.chbx_location.Location = new System.Drawing.Point(277, 112);
-            this.chbx_location.Name = "chbx_location";
-            this.chbx_location.Size = new System.Drawing.Size(123, 24);
-            this.chbx_location.TabIndex = 18;
-            this.chbx_location.Text = "по Локаціях";
-            this.chbx_location.UseVisualStyleBackColor = true;
-            this.chbx_location.CheckedChanged += new System.EventHandler(this.chbx_location_CheckedChanged);
-            // 
-            // chbx_zone
-            // 
-            this.chbx_zone.AutoSize = true;
-            this.chbx_zone.Location = new System.Drawing.Point(406, 112);
-            this.chbx_zone.Name = "chbx_zone";
-            this.chbx_zone.Size = new System.Drawing.Size(102, 24);
-            this.chbx_zone.TabIndex = 19;
-            this.chbx_zone.Text = "по Зонах";
-            this.chbx_zone.UseVisualStyleBackColor = true;
-            this.chbx_zone.CheckedChanged += new System.EventHandler(this.chbx_zone_CheckedChanged);
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(86, 32);
+            this.toolStripMenuItem1.Text = "Накази";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(923, 664);
+            this.ClientSize = new System.Drawing.Size(923, 694);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.gb_progress);
             this.Controls.Add(this.gb_result);
             this.Controls.Add(this.btn_generate);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.MaximumSize = new System.Drawing.Size(945, 720);
-            this.MinimumSize = new System.Drawing.Size(945, 720);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
+            this.MaximumSize = new System.Drawing.Size(945, 750);
+            this.MinimumSize = new System.Drawing.Size(945, 750);
             this.Name = "MainForm";
             this.Text = "Рапорт Генератор";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -435,7 +459,10 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmb_zoom)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -473,6 +500,8 @@
         private System.Windows.Forms.CheckBox chbx_zone;
         private System.Windows.Forms.CheckBox chbx_location;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

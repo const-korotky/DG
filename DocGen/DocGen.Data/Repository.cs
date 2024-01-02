@@ -16,6 +16,7 @@ namespace DocGen.Data
         public bool IsNormalized { get; set; }
 
         protected readonly List<PersonStatusRecord> PersonStatusRecords;
+        public readonly List<SectorItem> SectorItems;
 
         public readonly List<Person> Person;
         public readonly List<Location> Location;
@@ -32,6 +33,7 @@ namespace DocGen.Data
             Order = new List<Order>();
 
             PersonStatusRecords = new List<PersonStatusRecord>();
+            SectorItems = new List<SectorItem>();
         }
 
         public void Load(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
@@ -46,6 +48,8 @@ namespace DocGen.Data
         }
         public void Reload(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
         {
+            SectorItems.Clear();
+
             Person.Clear();
             Location.Clear();
             Zone.Clear();
@@ -183,6 +187,10 @@ namespace DocGen.Data
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
+                SectorItem sectorItem = new SectorItem();
+                sectorItem.StartDate = cells[1].Value;
+                sectorItem.EndDate = cells[2].Value;
+
                 DateTimeInterval interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
                 if (interval == null)
                 {
@@ -191,11 +199,15 @@ namespace DocGen.Data
                 interval.Description = TrimDataString(cells[5].Value);
                 interval.Note = TrimDataString(cells[6].Value);
 
+                sectorItem.Description = interval.Description;
+                sectorItem.Note = interval.Note;
+
                 var orderName = TrimDataString(cells[0].Value);
                 var order = Order.FirstOrDefault(i => i.Name == orderName);
                 if (order != null)
                 {
                     interval.Order = order;
+                    sectorItem.Order = order;
                 }
 
                 var locationName = TrimDataString(cells[4].Value);
@@ -203,6 +215,7 @@ namespace DocGen.Data
                 if (location != null)
                 {
                     interval.Location = location;
+                    sectorItem.Location = location;
                 }
 
                 var zoneName = TrimDataString(cells[7].Value);
@@ -210,6 +223,7 @@ namespace DocGen.Data
                 if (zone != null)
                 {
                     interval.Zone = zone;
+                    sectorItem.Zone = zone;
                 }
 
                 var personNames = (TrimDataString(cells[3].Value) as string).Split(',');
@@ -220,6 +234,13 @@ namespace DocGen.Data
                     {
                         person.Sector.Add(interval);
                     }
+
+                    var allPerson = Person.FirstOrDefault(i => i.Name == "ALL (КП)");
+                    if (allPerson != null)
+                    {
+                        allPerson.Sector.Add(interval);
+                        sectorItem.Persons.Add(allPerson);
+                    }
                 }
                 else if (( personNames.Length == 1 )&&( personNames[0] == "ALL (ТКП)"))
                 {
@@ -227,6 +248,13 @@ namespace DocGen.Data
                     foreach (var person in Person.Where(i => i.Company == "ТКП"))
                     {
                         person.Sector.Add(interval);
+                    }
+
+                    var allPerson = Person.FirstOrDefault(i => i.Name == "ALL (ТКП)");
+                    if (allPerson != null)
+                    {
+                        allPerson.Sector.Add(interval);
+                        sectorItem.Persons.Add(allPerson);
                     }
                 }
                 else
@@ -237,11 +265,14 @@ namespace DocGen.Data
                         if (person != null)
                         {
                             person.Sector.Add(interval);
+                            sectorItem.Persons.Add(person);
                         }
                     }
                 }
                 IncrementProgressBy(0.05);
                 Console.WriteLine($"{interval}");
+
+                SectorItems.Add(sectorItem);
             }
         }
 
