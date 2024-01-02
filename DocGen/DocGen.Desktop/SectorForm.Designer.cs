@@ -134,7 +134,6 @@
             this.btn_AddOrder.TabIndex = 0;
             this.btn_AddOrder.Text = "Новий Наказ";
             this.btn_AddOrder.UseVisualStyleBackColor = true;
-            this.btn_AddOrder.Click += new System.EventHandler(this.btn_AddOrder_Click);
             // 
             // tableLayoutPanel1
             // 
