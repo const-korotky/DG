@@ -10,6 +10,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DocGen.Data;
 using DocGen.Processor;
 
 namespace DocGen.Desktop
@@ -18,6 +19,8 @@ namespace DocGen.Desktop
     {
         public const string WordFileExtentionFilter = "Word files (*.doc; *.docx)|*.doc; *.docx|All files (*.*)|*.*";
         public const string ExcelFileExtentionFilter = "Excel files (*.xls; *.xlsx; *.xlsm)|*.xls; *.xlsx; *.xlsm|All files (*.*)|*.*";
+
+        private Datastore _datastore;
 
         private readonly ExcelProcessor ExcelProcessor;
         private readonly WordProcessor WordProcessor;
@@ -190,9 +193,22 @@ namespace DocGen.Desktop
             return true;
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void menuItem_Order_Click(object sender, EventArgs e)
         {
-            (new SectorForm(ExcelProcessor.Datastore)).ShowDialog(this);
+            if (_datastore == null)
+            {
+                DialogBox.ShowWarning(this, $"Завантажте файл Бази Даних.");
+                return;
+            }
+            (new SectorForm(ExcelProcessor, _datastore)).ShowDialog(this);
+        }
+
+        private void btn_loadDb_Click(object sender, EventArgs e)
+        {
+            gb_progress.Visible = true;
+            ExcelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
+            _datastore = ExcelProcessor.LoadDatastoreOnDemand();
+            ExcelProcessor.ProgressUpdatedEvent -= progressUpdated_EventHandler;
         }
     }
 }

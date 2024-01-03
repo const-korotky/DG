@@ -69,6 +69,41 @@ namespace DocGen.Processor
 
         #region Load/Update Datastore
 
+        public Datastore LoadDatastoreOnDemand()
+        {
+            ExcelApplication excel = new ExcelApplication();
+            Workbook workbook = null;
+            try
+            {
+                UpdateProgress(0, "Відкриття бази даних....");
+                workbook = excel.Workbooks.Open(SourceFilePath);
+                UpdateProgress(20, "Бази даних відкрита.");
+
+                UpdateProgress(20, "Розпочато завантаження бази даних....");
+                var datastore = new Datastore(IncrementProgressBy);
+
+                datastore.Load(workbook, StartDate, EndDate);
+                UpdateProgress(90, "Завантаження бази даних завершено.");
+
+                workbook.Close(SaveChanges: false);
+
+                excel.Quit();
+                UpdateProgress(100, "Операцію завершено.");
+
+                return datastore;
+            }
+            catch (Exception e) { return null; }
+            catch { return null; }
+            finally
+            {
+                if (workbook != null)
+                {
+                    Marshal.FinalReleaseComObject(workbook);
+                }
+                Marshal.FinalReleaseComObject(excel);
+            }
+        }
+
         public void LoadDatastore(Workbook workbook, bool reload = false)
         {
             if (Datastore == null)
@@ -129,6 +164,32 @@ namespace DocGen.Processor
             }
             catch (Exception e) { return null; }
             catch { return null; }
+        }
+
+        public void SaveDatastoreOnDemand(Datastore datastore)
+        {
+            ExcelApplication excel = new ExcelApplication();
+            Workbook workbook = null;
+            try
+            {
+                workbook = excel.Workbooks.Open(SourceFilePath);
+
+                datastore.SaveSectorItems(workbook);
+
+                workbook.Close(SaveChanges: true);
+
+                excel.Quit();
+            }
+            catch (Exception e) { }
+            catch { }
+            finally
+            {
+                if (workbook != null)
+                {
+                    Marshal.FinalReleaseComObject(workbook);
+                }
+                Marshal.FinalReleaseComObject(excel);
+            }
         }
 
         #endregion Load/Update Datastore

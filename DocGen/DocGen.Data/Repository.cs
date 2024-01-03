@@ -207,26 +207,28 @@ namespace DocGen.Data
                 if (order != null)
                 {
                     interval.Order = order;
-                    sectorItem.Order = order;
                 }
+                sectorItem.OrderName = orderName;
 
                 var locationName = TrimDataString(cells[4].Value);
                 var location = Location.FirstOrDefault(i => i.Name == locationName);
                 if (location != null)
                 {
                     interval.Location = location;
-                    sectorItem.Location = location;
                 }
+                sectorItem.LocationName = locationName;
 
                 var zoneName = TrimDataString(cells[7].Value);
                 var zone = Zone.FirstOrDefault(i => i.Name == zoneName);
                 if (zone != null)
                 {
                     interval.Zone = zone;
-                    sectorItem.Zone = zone;
                 }
+                sectorItem.ZoneName = zoneName;
 
-                var personNames = (TrimDataString(cells[3].Value) as string).Split(',');
+                var persons = TrimDataString(cells[3].Value);
+                sectorItem.Persons = persons;
+                var personNames = (persons as string).Split(',');
                 if (( personNames.Length == 1 )&&( personNames[0] == "ALL (КП)"))
                 {
                     interval.IsGeneral = true;
@@ -239,7 +241,6 @@ namespace DocGen.Data
                     if (allPerson != null)
                     {
                         allPerson.Sector.Add(interval);
-                        sectorItem.Persons.Add(allPerson);
                     }
                 }
                 else if (( personNames.Length == 1 )&&( personNames[0] == "ALL (ТКП)"))
@@ -254,7 +255,6 @@ namespace DocGen.Data
                     if (allPerson != null)
                     {
                         allPerson.Sector.Add(interval);
-                        sectorItem.Persons.Add(allPerson);
                     }
                 }
                 else
@@ -265,7 +265,6 @@ namespace DocGen.Data
                         if (person != null)
                         {
                             person.Sector.Add(interval);
-                            sectorItem.Persons.Add(person);
                         }
                     }
                 }
@@ -325,24 +324,6 @@ namespace DocGen.Data
                 return null;
             } return data;
         }
-
-        /*private static void UploadData(Workbook workbook)
-        {
-            Range table = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE");
-            Range firstRow = table.Rows.Cast<Range>().FirstOrDefault();
-            if (firstRow != null)
-            {
-                firstRow.Insert(XlInsertShiftDirection.xlShiftDown);
-                firstRow.Insert(XlInsertShiftDirection.xlShiftDown);
-
-                var cells = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().First().Cells.Cast<Range>().ToList();
-
-                cells[0].Value = "ЦИГАНОВА Людмила Федорівна";
-                cells[1].Value = DateTime.Today;
-                cells[2].Value = DateTime.Today.AddDays(1);
-                cells[3].Value = "Відпустка FFFF";
-            }
-        }*/
 
         public void LoadPersonStatusRecords(Workbook workbook)
         {
@@ -511,6 +492,34 @@ namespace DocGen.Data
                 {
                     dictionary[record.PersonName].Add(record);
                 }
+            }
+        }
+
+        public void SaveSectorItems(Workbook workbook)
+        {
+            Range table = GetTable(workbook, "СЕКТОР", "SECTOR");
+            table.Rows.Delete();
+
+            Range row = GetTable(workbook, "СЕКТОР", "SECTOR").Rows.Cast<Range>().FirstOrDefault();
+            if (row == null)
+            {
+                return;
+            }
+            foreach (var item in SectorItems)
+            {
+                var cells = row.Cells.Cast<Range>().ToList();
+
+                cells[0].Value = item.OrderName;
+                cells[1].Value = item.StartDate;
+                cells[2].Value = item.EndDate;
+                cells[3].Value = item.Persons;
+                cells[4].Value = item.LocationName;
+                cells[5].Value = item.Description;
+                cells[6].Value = item.Note;
+                cells[7].Value = item.ZoneName;
+
+                row.Insert(XlInsertShiftDirection.xlShiftDown);
+                row = GetTable(workbook, "СЕКТОР", "SECTOR").Rows.Cast<Range>().First();
             }
         }
     }

@@ -50,6 +50,20 @@ namespace DocGen.Desktop
 
             return prompt.ShowDialog(owner);
         }
+        public static Form ShowInfoWithoutConfirmation(IWin32Window owner, string text)
+        {
+            Form prompt = new Form()
+            {
+                Width = 500,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Інформація",
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label textLabel = new Label() { Left = 50, Top=20, Width = 400, Text=text };
+            prompt.Controls.Add(textLabel);
+            return prompt;
+        }
         public static DialogResult ShowWarning(IWin32Window owner, string text)
         {
             Form prompt = new Form()

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btn_loadDb = new System.Windows.Forms.Button();
             this.btn_open_data = new System.Windows.Forms.Button();
             this.txb_data = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,7 +62,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItem_Order = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btn_loadDb);
             this.groupBox1.Controls.Add(this.btn_open_data);
             this.groupBox1.Controls.Add(this.txb_data);
             this.groupBox1.Controls.Add(this.label2);
@@ -83,10 +85,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Зазначте шлях до даних";
             // 
+            // btn_loadDb
+            // 
+            this.btn_loadDb.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_loadDb.Location = new System.Drawing.Point(753, 27);
+            this.btn_loadDb.Name = "btn_loadDb";
+            this.btn_loadDb.Size = new System.Drawing.Size(135, 35);
+            this.btn_loadDb.TabIndex = 4;
+            this.btn_loadDb.Text = "Завантажити";
+            this.btn_loadDb.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btn_loadDb.UseVisualStyleBackColor = true;
+            this.btn_loadDb.Click += new System.EventHandler(this.btn_loadDb_Click);
+            // 
             // btn_open_data
             // 
             this.btn_open_data.Font = new System.Drawing.Font("Impact", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_open_data.Location = new System.Drawing.Point(852, 27);
+            this.btn_open_data.Location = new System.Drawing.Point(711, 27);
             this.btn_open_data.Name = "btn_open_data";
             this.btn_open_data.Size = new System.Drawing.Size(36, 35);
             this.btn_open_data.TabIndex = 2;
@@ -99,7 +113,7 @@
             // 
             this.txb_data.Location = new System.Drawing.Point(152, 29);
             this.txb_data.Name = "txb_data";
-            this.txb_data.Size = new System.Drawing.Size(694, 26);
+            this.txb_data.Size = new System.Drawing.Size(553, 26);
             this.txb_data.TabIndex = 3;
             this.txb_data.TextChanged += new System.EventHandler(this.txb_data_TextChanged);
             // 
@@ -416,19 +430,19 @@
             this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
+            this.menuItem_Order});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(923, 36);
+            this.menuStrip1.Size = new System.Drawing.Size(923, 33);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // toolStripMenuItem1
+            // menuItem_Order
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(86, 32);
-            this.toolStripMenuItem1.Text = "Накази";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.menuItem_Order.Name = "menuItem_Order";
+            this.menuItem_Order.Size = new System.Drawing.Size(86, 29);
+            this.menuItem_Order.Text = "Накази";
+            this.menuItem_Order.Click += new System.EventHandler(this.menuItem_Order_Click);
             // 
             // MainForm
             // 
@@ -501,7 +515,8 @@
         private System.Windows.Forms.CheckBox chbx_location;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem menuItem_Order;
+        private System.Windows.Forms.Button btn_loadDb;
     }
 }
 

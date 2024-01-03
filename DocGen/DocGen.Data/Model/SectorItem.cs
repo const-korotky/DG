@@ -7,31 +7,18 @@ using Microsoft.SqlServer.Server;
 
 namespace DocGen.Data.Model
 {
-    public class SectorItem
+    public class SectorItem : Entity
     {
-        public Order Order { get; set; }
-        public Location Location { get; set; }
-        public Zone Zone { get; set; }
+        public bool IsNew { get; set; } = false;
+        public bool IsDirty { get; set; } = false;
 
-        public string Note { get; set; }
-        public string Description { get; set; }
-
-        public bool IsInactive { get; set; }
-
+        public string OrderName { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-
-        public List<Person> Persons { get; }
-
-        public SectorItem()
-        {
-            Persons = new List<Person>();
-        }
-
-        public override string ToString()
-        {
-            return string.Empty;
-            //return $"Location [Name: {Name}][Color: {Color}][FontColor: {FontColor}]";
-        }
+        public string Persons { get; set; }
+        public string LocationName { get; set; }
+        public string Description { get; set; }
+        public string Note { get; set; }
+        public string ZoneName { get; set; }
     }
 }

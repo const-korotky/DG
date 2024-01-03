@@ -76,6 +76,7 @@
     <EmbeddedResource Include="SectorForm.resx">
       <DependentUpon>SectorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Properties\DataSources\DocGen.Data.Model.SectorItem.datasource" />
     <None Include="Properties\DataSources\SectorGridDataSourceItem.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

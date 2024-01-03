@@ -32,26 +32,26 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGrid_sector = new System.Windows.Forms.DataGridView();
             this.colID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colZoneName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colStartDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEndDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colPersons = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colLocationName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colZoneName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colNote = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sectorItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.btn_RemoveOrder = new System.Windows.Forms.Button();
             this.btn_EditOrder = new System.Windows.Forms.Button();
             this.btn_AddOrder = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.colOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colStartDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colEndDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colPersons = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colNote = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sectorGridDataSourceItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_sector)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sectorItemBindingSource)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.sectorGridDataSourceItemBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGrid_sector
@@ -68,11 +68,11 @@
             this.colStartDate,
             this.colEndDate,
             this.colPersons,
-            this.colDescription,
-            this.colNote,
+            this.colLocationName,
             this.colZoneName,
-            this.colLocationName});
-            this.dataGrid_sector.DataSource = this.sectorGridDataSourceItemBindingSource;
+            this.colDescription,
+            this.colNote});
+            this.dataGrid_sector.DataSource = this.sectorItemBindingSource;
             this.dataGrid_sector.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGrid_sector.Location = new System.Drawing.Point(3, 22);
             this.dataGrid_sector.MultiSelect = false;
@@ -91,13 +91,41 @@
             this.colID.Visible = false;
             this.colID.Width = 150;
             // 
-            // colZoneName
+            // colOrderName
             // 
-            this.colZoneName.DataPropertyName = "ZoneName";
-            this.colZoneName.HeaderText = "Зона";
-            this.colZoneName.MinimumWidth = 8;
-            this.colZoneName.Name = "colZoneName";
-            this.colZoneName.Width = 150;
+            this.colOrderName.DataPropertyName = "OrderName";
+            this.colOrderName.HeaderText = "Наказ";
+            this.colOrderName.MinimumWidth = 8;
+            this.colOrderName.Name = "colOrderName";
+            this.colOrderName.Width = 150;
+            // 
+            // colStartDate
+            // 
+            this.colStartDate.DataPropertyName = "StartDate";
+            this.colStartDate.HeaderText = "Дата Початку";
+            this.colStartDate.MinimumWidth = 8;
+            this.colStartDate.Name = "colStartDate";
+            this.colStartDate.ReadOnly = true;
+            this.colStartDate.Width = 150;
+            // 
+            // colEndDate
+            // 
+            this.colEndDate.DataPropertyName = "EndDate";
+            this.colEndDate.HeaderText = "Дата Кінця";
+            this.colEndDate.MinimumWidth = 8;
+            this.colEndDate.Name = "colEndDate";
+            this.colEndDate.ReadOnly = true;
+            this.colEndDate.Width = 150;
+            // 
+            // colPersons
+            // 
+            this.colPersons.DataPropertyName = "Persons";
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.colPersons.DefaultCellStyle = dataGridViewCellStyle1;
+            this.colPersons.HeaderText = "Особовий Склад";
+            this.colPersons.MinimumWidth = 8;
+            this.colPersons.Name = "colPersons";
+            this.colPersons.Width = 150;
             // 
             // colLocationName
             // 
@@ -106,6 +134,36 @@
             this.colLocationName.MinimumWidth = 8;
             this.colLocationName.Name = "colLocationName";
             this.colLocationName.Width = 150;
+            // 
+            // colZoneName
+            // 
+            this.colZoneName.DataPropertyName = "ZoneName";
+            this.colZoneName.HeaderText = "Зона";
+            this.colZoneName.MinimumWidth = 8;
+            this.colZoneName.Name = "colZoneName";
+            this.colZoneName.Width = 150;
+            // 
+            // colDescription
+            // 
+            this.colDescription.DataPropertyName = "Description";
+            this.colDescription.HeaderText = "Опис";
+            this.colDescription.MinimumWidth = 8;
+            this.colDescription.Name = "colDescription";
+            this.colDescription.ReadOnly = true;
+            this.colDescription.Width = 150;
+            // 
+            // colNote
+            // 
+            this.colNote.DataPropertyName = "Note";
+            this.colNote.HeaderText = "Опис для Рапорта";
+            this.colNote.MinimumWidth = 8;
+            this.colNote.Name = "colNote";
+            this.colNote.ReadOnly = true;
+            this.colNote.Width = 150;
+            // 
+            // sectorItemBindingSource
+            // 
+            this.sectorItemBindingSource.DataSource = typeof(DocGen.Data.Model.SectorItem);
             // 
             // btn_RemoveOrder
             // 
@@ -175,66 +233,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Накази";
             // 
-            // colOrderName
-            // 
-            this.colOrderName.DataPropertyName = "OrderName";
-            this.colOrderName.HeaderText = "Наказ";
-            this.colOrderName.MinimumWidth = 8;
-            this.colOrderName.Name = "colOrderName";
-            this.colOrderName.ReadOnly = true;
-            this.colOrderName.Width = 150;
-            // 
-            // colStartDate
-            // 
-            this.colStartDate.DataPropertyName = "StartDate";
-            this.colStartDate.HeaderText = "Дата Початку";
-            this.colStartDate.MinimumWidth = 8;
-            this.colStartDate.Name = "colStartDate";
-            this.colStartDate.ReadOnly = true;
-            this.colStartDate.Width = 150;
-            // 
-            // colEndDate
-            // 
-            this.colEndDate.DataPropertyName = "EndDate";
-            this.colEndDate.HeaderText = "Дата Кінця";
-            this.colEndDate.MinimumWidth = 8;
-            this.colEndDate.Name = "colEndDate";
-            this.colEndDate.ReadOnly = true;
-            this.colEndDate.Width = 150;
-            // 
-            // colPersons
-            // 
-            this.colPersons.DataPropertyName = "Persons";
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.colPersons.DefaultCellStyle = dataGridViewCellStyle1;
-            this.colPersons.HeaderText = "Особовий Скад";
-            this.colPersons.MinimumWidth = 8;
-            this.colPersons.Name = "colPersons";
-            this.colPersons.ReadOnly = true;
-            this.colPersons.Width = 150;
-            // 
-            // colDescription
-            // 
-            this.colDescription.DataPropertyName = "Description";
-            this.colDescription.HeaderText = "Опис";
-            this.colDescription.MinimumWidth = 8;
-            this.colDescription.Name = "colDescription";
-            this.colDescription.ReadOnly = true;
-            this.colDescription.Width = 150;
-            // 
-            // colNote
-            // 
-            this.colNote.DataPropertyName = "Note";
-            this.colNote.HeaderText = "Опис для Рапорта";
-            this.colNote.MinimumWidth = 8;
-            this.colNote.Name = "colNote";
-            this.colNote.ReadOnly = true;
-            this.colNote.Width = 150;
-            // 
-            // sectorGridDataSourceItemBindingSource
-            // 
-            this.sectorGridDataSourceItemBindingSource.DataSource = typeof(DocGen.Desktop.SectorGridDataSourceItem);
-            // 
             // SectorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -243,11 +241,12 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "SectorForm";
             this.Text = "Наказ";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SectorForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_sector)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sectorItemBindingSource)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.sectorGridDataSourceItemBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -257,21 +256,21 @@
         private System.Windows.Forms.DataGridView dataGrid_sector;
         private System.Windows.Forms.DataGridViewTextBoxColumn locationDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn zoneDataGridViewTextBoxColumn;
-        private System.Windows.Forms.BindingSource sectorGridDataSourceItemBindingSource;
         private System.Windows.Forms.Button btn_AddOrder;
         private System.Windows.Forms.Button btn_RemoveOrder;
         private System.Windows.Forms.Button btn_EditOrder;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.BindingSource sectorItemBindingSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn colID;
         private System.Windows.Forms.DataGridViewTextBoxColumn colOrderName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colStartDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn colEndDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn colPersons;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colLocationName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colZoneName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colDescription;
         private System.Windows.Forms.DataGridViewTextBoxColumn colNote;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colZoneName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colLocationName;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox3;
     }
 }

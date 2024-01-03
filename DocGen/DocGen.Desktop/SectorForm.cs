@@ -5,35 +5,28 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DocGen.Data;
+using DocGen.Data.Model;
+using DocGen.Processor;
 
 namespace DocGen.Desktop
 {
     public partial class SectorForm : Form
     {
-        private Datastore Datastore { get; set; }
+        private Datastore _datastore { get; set; }
+        private ExcelProcessor _excelProcessor { get; set; }
 
-        public SectorForm(Datastore datastore)
+        public SectorForm(ExcelProcessor excelProcessor, Datastore datastore)
         {
             InitializeComponent();
 
-            Datastore = datastore;
+            _datastore = datastore;
+            _excelProcessor = excelProcessor;
 
-            dataGrid_sector.DataSource
-                = new BindingList<SectorGridDataSourceItem>(datastore.SectorItems.Select(
-                    i => new SectorGridDataSourceItem
-                    {
-                        OrderName = i.Order?.Name,
-                        StartDate = i.StartDate,
-                        EndDate = i.EndDate,
-                        Persons = string.Join($",{Environment.NewLine}", i.Persons.Select(p => p.Name).ToArray()),
-                        LocationName = i.Location?.Name,
-                        Description = i.Description,
-                        Note = i.Note,
-                        ZoneName = i.Zone?.Name
-                    }).ToList());
+            dataGrid_sector.DataSource = new BindingList<SectorItem>(datastore.SectorItems);
         }
 
         /*private void btn_AddOrder_Click(object sender, EventArgs e)
@@ -55,7 +48,7 @@ namespace DocGen.Desktop
 
         private void btn_RemoveOrder_Click(object sender, EventArgs e)
         {
-            var data = (dataGrid_sector.DataSource as BindingList<SectorGridDataSourceItem>);
+            var data = (dataGrid_sector.DataSource as BindingList<SectorItem>);
 
             foreach (DataGridViewRow row in dataGrid_sector.SelectedRows)
             {
@@ -70,28 +63,19 @@ namespace DocGen.Desktop
                 }
             }
         }
-    }
 
+        private void SectorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var dialog = DialogBox.ShowInfoWithoutConfirmation(this, "Збереження даних....");
+            dialog.Shown += Dialog_Shown;
+            dialog.ShowDialog(this);
+        }
 
-
-    public class SectorGridDataSourceItem
-    {
-        protected static int count = 0;
-
-        public SectorGridDataSourceItem() { ID = ++count; }
-
-        public bool IsNew { get; set; } = false;
-        public bool IsDirty { get; set; } = false;
-
-        public int ID { get; set; }
-
-        public string OrderName { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public string Persons { get; set; }
-        public string LocationName { get; set; }
-        public string Description { get; set; }
-        public string Note { get; set; }
-        public string ZoneName { get; set; }
+        private void Dialog_Shown(object sender, EventArgs e)
+        {
+            Application.DoEvents();
+            _excelProcessor.SaveDatastoreOnDemand(_datastore);
+            (sender as Form).Close();
+        }
     }
 }
