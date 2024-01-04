@@ -9,6 +9,8 @@ namespace DocGen.Data
 {
     public class Datastore
     {
+        #region Properties and Fields
+
         protected readonly Action<double> ProgressIncrementor = null;
         protected void IncrementProgressBy(double value) { ProgressIncrementor?.Invoke(value); }
 
@@ -23,6 +25,8 @@ namespace DocGen.Data
         public readonly List<Zone> Zone;
         public readonly List<Order> Order;
 
+        #endregion Properties and Fields
+
         public Datastore(Action<double> progressIncrementor = null)
         {
             ProgressIncrementor = progressIncrementor;
@@ -35,6 +39,8 @@ namespace DocGen.Data
             PersonStatusRecords = new List<PersonStatusRecord>();
             SectorItems = new List<SectorItem>();
         }
+
+        #region Load
 
         public void Load(Workbook workbook, DateTime? startDate = null, DateTime? endDate = null)
         {
@@ -275,6 +281,10 @@ namespace DocGen.Data
             }
         }
 
+        #endregion Load
+
+        #region Utility Methods
+
         protected static DateTimeInterval ComposeInterval
             ( DateTime? readStartDate
             , DateTime? readEndDate
@@ -324,6 +334,10 @@ namespace DocGen.Data
                 return null;
             } return data;
         }
+
+        #endregion Utility Methods
+
+        #region PersonStatusRecords
 
         public void LoadPersonStatusRecords(Workbook workbook)
         {
@@ -495,6 +509,10 @@ namespace DocGen.Data
             }
         }
 
+        #endregion PersonStatusRecords
+
+        #region SectorItems
+
         public void SaveSectorItems(Workbook workbook)
         {
             Range table = GetTable(workbook, "СЕКТОР", "SECTOR");
@@ -505,7 +523,8 @@ namespace DocGen.Data
             {
                 return;
             }
-            foreach (var item in SectorItems)
+            var items = (SectorItems as IEnumerable<SectorItem>).Reverse();
+            foreach (var item in items)
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
@@ -521,6 +540,14 @@ namespace DocGen.Data
                 row.Insert(XlInsertShiftDirection.xlShiftDown);
                 row = GetTable(workbook, "СЕКТОР", "SECTOR").Rows.Cast<Range>().First();
             }
+
+            row = GetTable(workbook, "СЕКТОР", "SECTOR").Rows.Cast<Range>().FirstOrDefault();
+            if (row != null)
+            {
+                row.Delete();
+            }
         }
+
+        #endregion SectorItems
     }
 }
