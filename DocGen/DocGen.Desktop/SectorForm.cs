@@ -63,6 +63,18 @@ namespace DocGen.Desktop
                 }
             }
         }
+        private void btn_AddOrder_Click(object sender, EventArgs e)
+        {
+            var sectorItem = new SectorItem() { IsNew = true };
+            var newOrderForm = new NewOrderForm(_datastore, sectorItem);
+            newOrderForm.ShowDialog(this);
+
+            if (newOrderForm.Result == DialogResult.OK)
+            {
+                var data = (dataGrid_sector.DataSource as BindingList<SectorItem>);
+                data.Add(sectorItem);
+            }
+        }
 
         private void SectorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -74,7 +86,7 @@ namespace DocGen.Desktop
         private void Dialog_Shown(object sender, EventArgs e)
         {
             Application.DoEvents();
-            _excelProcessor.SaveDatastoreOnDemand(_datastore);
+            //_excelProcessor.SaveDatastoreOnDemand(_datastore);
             (sender as Form).Close();
         }
     }
