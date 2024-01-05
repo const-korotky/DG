@@ -16,15 +16,17 @@ namespace DocGen.Desktop
 {
     public partial class SectorForm : Form
     {
-        private Datastore _datastore { get; set; }
-        private ExcelProcessor _excelProcessor { get; set; }
+        private readonly Datastore _datastore;
+        private readonly ExcelProcessor _excelProcessor;
+        private readonly WordProcessor _wordProcessor;
 
-        public SectorForm(ExcelProcessor excelProcessor, Datastore datastore)
+        public SectorForm(ExcelProcessor excelProcessor, WordProcessor wordProcessor, Datastore datastore)
         {
             InitializeComponent();
 
             _datastore = datastore;
             _excelProcessor = excelProcessor;
+            _wordProcessor = wordProcessor;
 
             dataGrid_sector.DataSource = new BindingList<SectorItem>(datastore.SectorItems);
         }
@@ -73,6 +75,12 @@ namespace DocGen.Desktop
             {
                 var data = (dataGrid_sector.DataSource as BindingList<SectorItem>);
                 data.Add(sectorItem);
+
+                if (newOrderForm.CreateWordDoc)
+                {
+                    _wordProcessor.OpenDocumnet(_wordProcessor.CreateOrderDocument(_datastore, sectorItem));
+                    Close();
+                }
             }
         }
 

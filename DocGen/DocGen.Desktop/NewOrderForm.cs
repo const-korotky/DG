@@ -47,6 +47,19 @@ namespace DocGen.Desktop
         }
         private void btn_Save_Click(object sender, EventArgs e)
         {
+            PoplateDataToSectorItem();
+            Result = DialogResult.OK;
+            Close();
+        }
+        private void btn_SaveWord_Click(object sender, EventArgs e)
+        {
+            PoplateDataToSectorItem();
+            Result = DialogResult.OK;
+            CreateWordDoc = true;
+            Close();
+        }
+        private void PoplateDataToSectorItem()
+        {
             _sectorItem.OrderName = txb_OrderName.Text;
             _sectorItem.Description = txb_Description.Text;
             _sectorItem.Note = txb_note.Text;
@@ -57,15 +70,6 @@ namespace DocGen.Desktop
 
             var selectedItems = lst_Active.Items.Cast<string>().ToArray();
             _sectorItem.Persons = string.Join($",{Environment.NewLine}", selectedItems);
-
-            Result = DialogResult.OK;
-            Close();
-        }
-        private void btn_SaveWord_Click(object sender, EventArgs e)
-        {
-            Result = DialogResult.OK;
-            CreateWordDoc = true;
-            Close();
         }
 
         private void btn_add_Click(object sender, EventArgs e)

@@ -200,7 +200,7 @@ namespace DocGen.Desktop
                 DialogBox.ShowWarning(this, $"Завантажте файл Бази Даних.");
                 return;
             }
-            (new SectorForm(ExcelProcessor, _datastore)).ShowDialog(this);
+            (new SectorForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
         }
 
         private void btn_loadDb_Click(object sender, EventArgs e)

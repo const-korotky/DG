@@ -200,5 +200,104 @@ namespace DocGen.Processor
                    .Where(interval => ( interval.Zone != null )&&( interval.Zone.Value == zone ))
                    .ToList();
         }
+
+
+        public string CreateOrderDocument(Datastore datastore, SectorItem sectorItem)
+        {
+            WordApplication word = new WordApplication();
+            WordDocument doc = null;
+            try
+            {
+                doc = word.Documents.Open(@"D:\MSC\DG\work\БН_НАЧПВЗ.docx", ReadOnly: true, Visible: false);
+
+                FormatOrderDocument(datastore, sectorItem, doc);
+
+                var filePath = $"D:\\MSC\\DG\\work\\{sectorItem.OrderName}.docx";
+                doc.SaveAs(filePath);
+                doc.Close(SaveChanges: false);
+
+                word.Quit();
+
+                return filePath;
+            }
+            catch (Exception e) { return null; }
+            catch { return null; }
+            finally
+            {
+                if (doc != null)
+                {
+                    Marshal.FinalReleaseComObject(doc);
+                }
+                Marshal.FinalReleaseComObject(word);
+            }
+        }
+
+        public void FormatOrderDocument(Datastore datastore, SectorItem sectorItem, WordDocument doc)
+        {
+            doc.Content.Find.Execute(FindText: "$location$",
+                                    MatchCase: false,
+                                    MatchWholeWord: false,
+                                    MatchWildcards: false,
+                                    MatchSoundsLike: false,
+                                    MatchAllWordForms: false,
+                                    Forward: true, //this may be the one
+                                    Wrap: false,
+                                    Format: false,
+                                    ReplaceWith: sectorItem.LocationName,
+                                    Replace: WdReplace.wdReplaceAll
+                                    );
+            doc.Content.Find.Execute(FindText: "$DateStart$",
+                                    MatchCase: false,
+                                    MatchWholeWord: false,
+                                    MatchWildcards: false,
+                                    MatchSoundsLike: false,
+                                    MatchAllWordForms: false,
+                                    Forward: true, //this may be the one
+                                    Wrap: false,
+                                    Format: false,
+                                    ReplaceWith: sectorItem.StartDate,
+                                    Replace: WdReplace.wdReplaceAll
+                                    );
+            doc.Content.Find.Execute(FindText: "$DateEnd$",
+                                    MatchCase: false,
+                                    MatchWholeWord: false,
+                                    MatchWildcards: false,
+                                    MatchSoundsLike: false,
+                                    MatchAllWordForms: false,
+                                    Forward: true, //this may be the one
+                                    Wrap: false,
+                                    Format: false,
+                                    ReplaceWith: sectorItem.EndDate,
+                                    Replace: WdReplace.wdReplaceAll
+                                    );
+            doc.Content.Find.Execute(FindText: "$personnel$",
+                                    MatchCase: false,
+                                    MatchWholeWord: false,
+                                    MatchWildcards: false,
+                                    MatchSoundsLike: false,
+                                    MatchAllWordForms: false,
+                                    Forward: true, //this may be the one
+                                    Wrap: false,
+                                    Format: false,
+                                    ReplaceWith: FormatPersons(datastore, sectorItem),
+                                    Replace: WdReplace.wdReplaceAll
+                                    );
+        }
+
+        private string FormatPersons(Datastore datastore, SectorItem sectorItem)
+        {
+            var persons = new List<string>();
+
+            var personNames = sectorItem.Persons.Split(',');
+            foreach (var personName in personNames)
+            {
+                var person = datastore.Person.FirstOrDefault(i => i.Name == personName.Trim());
+                if (person != null)
+                {
+                    persons.Add($"{person.Rank} {person.Name}");
+                }
+            }
+            return string.Join(Environment.NewLine, persons);
+        }
     }
 }
