@@ -118,7 +118,7 @@ namespace DocGen.Desktop
         private void Dialog_Shown(object sender, EventArgs e)
         {
             Application.DoEvents();
-            //_excelProcessor.SaveDatastoreOnDemand(_datastore);
+            _excelProcessor.SaveDatastoreOnDemand(_datastore);
             (sender as Form).Close();
         }
     }
