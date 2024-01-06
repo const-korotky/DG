@@ -38,7 +38,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dt_EndDate = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
-            this.dt_startDate = new System.Windows.Forms.DateTimePicker();
+            this.dt_StartDate = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.cmb_Zone = new System.Windows.Forms.ComboBox();
@@ -46,15 +46,15 @@
             this.cmb_Location = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lst_Active = new System.Windows.Forms.CheckedListBox();
+            this.lst_Inactive = new System.Windows.Forms.CheckedListBox();
+            this.btn_remove = new System.Windows.Forms.Button();
+            this.btn_add = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.btn_SaveWord = new System.Windows.Forms.Button();
             this.btn_Save = new System.Windows.Forms.Button();
-            this.btn_add = new System.Windows.Forms.Button();
-            this.btn_remove = new System.Windows.Forms.Button();
-            this.lst_Inactive = new System.Windows.Forms.CheckedListBox();
-            this.lst_Active = new System.Windows.Forms.CheckedListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -76,10 +76,10 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Загальний Опис";
             // 
-            // tbx_note
+            // txb_note
             // 
             this.txb_note.Location = new System.Drawing.Point(661, 28);
-            this.txb_note.Name = "tbx_note";
+            this.txb_note.Name = "txb_note";
             this.txb_note.Size = new System.Drawing.Size(273, 104);
             this.txb_note.TabIndex = 6;
             this.txb_note.Text = "";
@@ -130,7 +130,7 @@
             // 
             this.groupBox2.Controls.Add(this.dt_EndDate);
             this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.dt_startDate);
+            this.groupBox2.Controls.Add(this.dt_StartDate);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Location = new System.Drawing.Point(12, 160);
             this.groupBox2.Name = "groupBox2";
@@ -143,8 +143,10 @@
             // 
             this.dt_EndDate.Location = new System.Drawing.Point(604, 28);
             this.dt_EndDate.Name = "dt_EndDate";
+            this.dt_EndDate.ShowCheckBox = true;
             this.dt_EndDate.Size = new System.Drawing.Size(330, 26);
             this.dt_EndDate.TabIndex = 3;
+            this.dt_EndDate.ValueChanged += new System.EventHandler(this.dt_EndDate_ValueChanged);
             // 
             // label5
             // 
@@ -157,10 +159,12 @@
             // 
             // dt_startDate
             // 
-            this.dt_startDate.Location = new System.Drawing.Point(131, 28);
-            this.dt_startDate.Name = "dt_startDate";
-            this.dt_startDate.Size = new System.Drawing.Size(330, 26);
-            this.dt_startDate.TabIndex = 1;
+            this.dt_StartDate.Location = new System.Drawing.Point(131, 28);
+            this.dt_StartDate.Name = "dt_startDate";
+            this.dt_StartDate.ShowCheckBox = true;
+            this.dt_StartDate.Size = new System.Drawing.Size(330, 26);
+            this.dt_StartDate.TabIndex = 1;
+            this.dt_StartDate.ValueChanged += new System.EventHandler(this.dt_startDate_ValueChanged);
             // 
             // label4
             // 
@@ -237,6 +241,44 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Особовий Склад";
             // 
+            // lst_Active
+            // 
+            this.lst_Active.FormattingEnabled = true;
+            this.lst_Active.Location = new System.Drawing.Point(72, 25);
+            this.lst_Active.Name = "lst_Active";
+            this.lst_Active.Size = new System.Drawing.Size(389, 303);
+            this.lst_Active.TabIndex = 8;
+            // 
+            // lst_Inactive
+            // 
+            this.lst_Inactive.FormattingEnabled = true;
+            this.lst_Inactive.Location = new System.Drawing.Point(604, 25);
+            this.lst_Inactive.Name = "lst_Inactive";
+            this.lst_Inactive.Size = new System.Drawing.Size(330, 303);
+            this.lst_Inactive.TabIndex = 7;
+            // 
+            // btn_remove
+            // 
+            this.btn_remove.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
+            this.btn_remove.Location = new System.Drawing.Point(467, 150);
+            this.btn_remove.Name = "btn_remove";
+            this.btn_remove.Size = new System.Drawing.Size(131, 32);
+            this.btn_remove.TabIndex = 5;
+            this.btn_remove.Text = ">>";
+            this.btn_remove.UseVisualStyleBackColor = true;
+            this.btn_remove.Click += new System.EventHandler(this.btn_remove_Click);
+            // 
+            // btn_add
+            // 
+            this.btn_add.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
+            this.btn_add.Location = new System.Drawing.Point(467, 188);
+            this.btn_add.Name = "btn_add";
+            this.btn_add.Size = new System.Drawing.Size(131, 32);
+            this.btn_add.TabIndex = 4;
+            this.btn_add.Text = "<<";
+            this.btn_add.UseVisualStyleBackColor = true;
+            this.btn_add.Click += new System.EventHandler(this.btn_add_Click);
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -285,44 +327,6 @@
             this.btn_Save.UseVisualStyleBackColor = true;
             this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
             // 
-            // btn_add
-            // 
-            this.btn_add.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
-            this.btn_add.Location = new System.Drawing.Point(467, 188);
-            this.btn_add.Name = "btn_add";
-            this.btn_add.Size = new System.Drawing.Size(131, 32);
-            this.btn_add.TabIndex = 4;
-            this.btn_add.Text = "<<";
-            this.btn_add.UseVisualStyleBackColor = true;
-            this.btn_add.Click += new System.EventHandler(this.btn_add_Click);
-            // 
-            // btn_remove
-            // 
-            this.btn_remove.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
-            this.btn_remove.Location = new System.Drawing.Point(467, 150);
-            this.btn_remove.Name = "btn_remove";
-            this.btn_remove.Size = new System.Drawing.Size(131, 32);
-            this.btn_remove.TabIndex = 5;
-            this.btn_remove.Text = ">>";
-            this.btn_remove.UseVisualStyleBackColor = true;
-            this.btn_remove.Click += new System.EventHandler(this.btn_remove_Click);
-            // 
-            // lst_Inactive
-            // 
-            this.lst_Inactive.FormattingEnabled = true;
-            this.lst_Inactive.Location = new System.Drawing.Point(604, 25);
-            this.lst_Inactive.Name = "lst_Inactive";
-            this.lst_Inactive.Size = new System.Drawing.Size(330, 303);
-            this.lst_Inactive.TabIndex = 7;
-            // 
-            // lst_Active
-            // 
-            this.lst_Active.FormattingEnabled = true;
-            this.lst_Active.Location = new System.Drawing.Point(72, 25);
-            this.lst_Active.Name = "lst_Active";
-            this.lst_Active.Size = new System.Drawing.Size(389, 303);
-            this.lst_Active.TabIndex = 8;
-            // 
             // NewOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -362,7 +366,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.DateTimePicker dt_startDate;
+        private System.Windows.Forms.DateTimePicker dt_StartDate;
         private System.Windows.Forms.DateTimePicker dt_EndDate;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;

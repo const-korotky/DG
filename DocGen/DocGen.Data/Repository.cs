@@ -110,9 +110,7 @@ namespace DocGen.Data
                 }
                 if (string.IsNullOrWhiteSpace(location.CodeName))
                 {
-                    var name = location.Name;
-                    int length = ((name.Length < 5) ? name.Length : 5);
-                    location.CodeName = name.Substring(0, length);
+                    location.CodeName = FormatLocationCodeName(location.Name);
                 }
                 Location.Add(location);
                 Console.WriteLine(location);
@@ -335,6 +333,13 @@ namespace DocGen.Data
             } return data;
         }
 
+        private static string FormatLocationCodeName(string locationName)
+        {
+            int length = ((locationName.Length < 5) ? locationName.Length : 5);
+            var locationCodeName = locationName.Substring(0, length);
+            return locationCodeName;
+        }
+
         #endregion Utility Methods
 
         #region PersonStatusRecords
@@ -511,9 +516,16 @@ namespace DocGen.Data
 
         #endregion PersonStatusRecords
 
-        #region SectorItems
+        #region Save
 
-        public void SaveSectorItems(Workbook workbook)
+        public void Save(Workbook workbook)
+        {
+            SaveSectorItems(workbook);
+            SaveLocations(workbook);
+            SaveOrders(workbook);
+        }
+
+        private void SaveSectorItems(Workbook workbook)
         {
             Range table = GetTable(workbook, "СЕКТОР", "SECTOR");
             table.Rows.Delete();
@@ -548,6 +560,58 @@ namespace DocGen.Data
             }
         }
 
-        #endregion SectorItems
+        private void SaveLocations(Workbook workbook)
+        {
+            var newLocations = Location.Where(i => i.IsNew).ToList();
+            var newLocationsCount = newLocations.Count;
+            if (newLocationsCount < 1)
+            {
+                return;
+            }
+            var index = 0;
+
+            Range table = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION");
+            foreach (Range row in table.Rows)
+            {
+                var cells = row.Cells.Cast<Range>().ToList();
+                var locationName = TrimDataString(cells[0].Value);
+                if (string.IsNullOrWhiteSpace(locationName))
+                {
+                    var newLocationName = newLocations[index].Name;
+                    cells[0].Value = newLocationName;
+                    cells[1].Value = FormatLocationCodeName(newLocationName);
+                    ++index;
+                    if (index == newLocationsCount)
+                    {
+                        break;
+                    }
+                }
+            }
+            while (index < newLocationsCount)
+            {
+                Range row = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION").Rows.Cast<Range>().FirstOrDefault();
+                if (row == null)
+                {
+                    return;
+                }
+                row.Insert(XlInsertShiftDirection.xlShiftDown);
+                row = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION").Rows.Cast<Range>().First();
+
+                var cells = row.Cells.Cast<Range>().ToList();
+
+                var newLocationName = newLocations[index].Name;
+                cells[0].Value = newLocationName;
+                cells[1].Value = FormatLocationCodeName(newLocationName);
+
+                ++index;
+            }
+        }
+
+        private void SaveOrders(Workbook workbook)
+        {
+
+        }
+
+        #endregion Save
     }
 }

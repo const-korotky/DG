@@ -9,9 +9,6 @@ namespace DocGen.Data.Model
 {
     public class SectorItem : Entity
     {
-        public bool IsNew { get; set; } = false;
-        public bool IsDirty { get; set; } = false;
-
         public string OrderName { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

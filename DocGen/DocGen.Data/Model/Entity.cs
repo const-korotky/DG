@@ -14,6 +14,9 @@ namespace DocGen.Data.Model
         public int ID { get; set; }
 
         protected Entity() { ID = ++NextID; }
+
+        public bool IsNew { get; set; } = false;
+        public bool IsDirty { get; set; } = false;
     }
 
     public abstract class ColorfulEntity : Entity

@@ -173,7 +173,7 @@ namespace DocGen.Processor
             try
             {
                 workbook = excel.Workbooks.Open(SourceFilePath);
-                datastore.SaveSectorItems(workbook);
+                datastore.Save(workbook);
                 workbook.Close(SaveChanges: true);
                 excel.Quit();
             }

@@ -63,13 +63,37 @@ namespace DocGen.Desktop
             _sectorItem.OrderName = txb_OrderName.Text;
             _sectorItem.Description = txb_Description.Text;
             _sectorItem.Note = txb_note.Text;
-            _sectorItem.StartDate = dt_startDate.Value;
-            _sectorItem.EndDate = dt_EndDate.Value;
+
+            if (!dt_StartDate.Checked) { _sectorItem.StartDate = null; } else { _sectorItem.StartDate = dt_StartDate.Value; }
+            if (!dt_EndDate.Checked) { _sectorItem.EndDate = null; } else { _sectorItem.EndDate = dt_EndDate.Value; }
+
             _sectorItem.LocationName = cmb_Location.Text;
             _sectorItem.ZoneName = cmb_Zone.Text;
 
             var selectedItems = lst_Active.Items.Cast<string>().ToArray();
             _sectorItem.Persons = string.Join($",{Environment.NewLine}", selectedItems);
+
+            var locationName = _datastore.Location.FirstOrDefault(i => (i.Name == _sectorItem.LocationName));
+            if (locationName == null)
+            {
+                _datastore.Location.Add(new Location()
+                {
+                    IsNew = true,
+                    Name = _sectorItem.LocationName,
+                });
+            }
+
+            var orderName = _datastore.Order.FirstOrDefault(i => (i.Name == _sectorItem.OrderName));
+            if (orderName == null)
+            {
+                _datastore.Order.Add(new Order()
+                {
+                    IsNew = true,
+                    Name = _sectorItem.OrderName,
+                    Description = _sectorItem.Description,
+                    CodeName = _sectorItem.Note,
+                });
+            }
         }
 
         private void btn_add_Click(object sender, EventArgs e)
@@ -95,6 +119,33 @@ namespace DocGen.Desktop
             string[] items = _personNames.Where(i => !activeItems.Contains(i)).ToArray();
             lst_Inactive.Items.AddRange(items);
             lst_Inactive.Refresh();
+        }
+
+        private void dt_EndDate_ValueChanged(object sender, EventArgs e)
+        {
+            if (!dt_EndDate.Checked)
+            {
+                dt_EndDate.CustomFormat = " ";
+                dt_EndDate.Format = DateTimePickerFormat.Custom;
+            }
+            else
+            {
+                dt_EndDate.CustomFormat = null;
+                dt_EndDate.Format = DateTimePickerFormat.Long;
+            }
+        }
+        private void dt_startDate_ValueChanged(object sender, EventArgs e)
+        {
+            if (!dt_StartDate.Checked)
+            {
+                dt_StartDate.CustomFormat = " ";
+                dt_StartDate.Format = DateTimePickerFormat.Custom;
+            }
+            else
+            {
+                dt_StartDate.CustomFormat = null;
+                dt_StartDate.Format = DateTimePickerFormat.Long;
+            }
         }
     }
 }
