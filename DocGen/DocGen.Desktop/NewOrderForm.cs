@@ -22,12 +22,17 @@ namespace DocGen.Desktop
         public bool CreateWordDoc { get; private set; }
         public DialogResult Result { get; private set; }
 
-        public NewOrderForm(Datastore datastore, SectorItem sectorItem)
+        public NewOrderForm(Datastore datastore, SectorItem sectorItem, bool isEdit = false)
         {
             _sectorItem = sectorItem;
             _datastore = datastore;
-            InitializeComponent();
 
+            InitializeComponent();
+            InitializeComponentData(isEdit);
+        }
+
+        private void InitializeComponentData(bool isEdit)
+        {
             _datastore.Location.ForEach(i => cmb_Location.Items.Add(i.Name));
 
             _datastore.Zone.ForEach(i => cmb_Zone.Items.Add(i.Name));
@@ -38,6 +43,45 @@ namespace DocGen.Desktop
 
             _personNames = _datastore.Person.Select(i => i.Name).ToList();
             lst_Inactive.Items.AddRange(_personNames.ToArray());
+
+            if (isEdit)
+            {
+                txb_OrderName.Text = _sectorItem.OrderName;
+                txb_Description.Text = _sectorItem.Description;
+                txb_Note.Text = _sectorItem.Note;
+                cmb_Location.Text = _sectorItem.LocationName;
+
+                if (!string.IsNullOrWhiteSpace(_sectorItem.Persons))
+                {
+                    var personNames = _sectorItem.Persons.Split(',').Select(i => i.Trim()).ToArray();
+                    lst_Active.Items.AddRange(personNames);
+
+                    foreach (var item in personNames)
+                    {
+                        lst_Inactive.Items.Remove(item);
+                    }
+                }
+                if (!_sectorItem.StartDate.HasValue)
+                {
+                    dt_StartDate.Checked = false;
+                    dt_StartDate.Value = DateTime.Today;
+                }
+                else
+                {
+                    dt_StartDate.Checked = true;
+                    dt_StartDate.Value = _sectorItem.StartDate.Value;
+                }
+                if (!_sectorItem.EndDate.HasValue)
+                {
+                    dt_EndDate.Checked = false;
+                    dt_EndDate.Value = DateTime.Today;
+                }
+                else
+                {
+                    dt_EndDate.Checked = true;
+                    dt_EndDate.Value = _sectorItem.EndDate.Value;
+                }
+            }
         }
 
         private void btn_Cancel_Click(object sender, EventArgs e)
@@ -58,11 +102,12 @@ namespace DocGen.Desktop
             CreateWordDoc = true;
             Close();
         }
+
         private void PoplateDataToSectorItem()
         {
             _sectorItem.OrderName = txb_OrderName.Text;
             _sectorItem.Description = txb_Description.Text;
-            _sectorItem.Note = txb_note.Text;
+            _sectorItem.Note = txb_Note.Text;
 
             if (!dt_StartDate.Checked) { _sectorItem.StartDate = null; } else { _sectorItem.StartDate = dt_StartDate.Value; }
             if (!dt_EndDate.Checked) { _sectorItem.EndDate = null; } else { _sectorItem.EndDate = dt_EndDate.Value; }
@@ -93,6 +138,11 @@ namespace DocGen.Desktop
                     Description = _sectorItem.Description,
                     CodeName = _sectorItem.Note,
                 });
+            }
+
+            if (!_sectorItem.IsNew)
+            {
+                _sectorItem.IsDirty = true;
             }
         }
 
@@ -134,7 +184,7 @@ namespace DocGen.Desktop
                 dt_EndDate.Format = DateTimePickerFormat.Long;
             }
         }
-        private void dt_startDate_ValueChanged(object sender, EventArgs e)
+        private void dt_StartDate_ValueChanged(object sender, EventArgs e)
         {
             if (!dt_StartDate.Checked)
             {

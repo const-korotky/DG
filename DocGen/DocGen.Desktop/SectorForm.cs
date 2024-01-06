@@ -83,6 +83,30 @@ namespace DocGen.Desktop
                 }
             }
         }
+        private void btn_EditOrder_Click(object sender, EventArgs e)
+        {
+            var data = (dataGrid_sector.DataSource as BindingList<SectorItem>);
+            var selecteRow = dataGrid_sector.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+            if (selecteRow == null)
+            {
+                return;
+            }
+            var id = (selecteRow.Cells["colID"].Value as int?);
+            if (!id.HasValue)
+            {
+                return;
+            }
+            var sectorItem = data.FirstOrDefault(i => (i.ID == id.Value));
+
+            var newOrderForm = new NewOrderForm(_datastore, sectorItem, isEdit: true);
+            newOrderForm.ShowDialog(this);
+
+            if ((newOrderForm.Result == DialogResult.OK) && newOrderForm.CreateWordDoc)
+            {
+                _wordProcessor.OpenDocumnet(_wordProcessor.CreateOrderDocument(_datastore, sectorItem));
+                Close();
+            }
+        }
 
         private void SectorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -94,7 +118,7 @@ namespace DocGen.Desktop
         private void Dialog_Shown(object sender, EventArgs e)
         {
             Application.DoEvents();
-            _excelProcessor.SaveDatastoreOnDemand(_datastore);
+            //_excelProcessor.SaveDatastoreOnDemand(_datastore);
             (sender as Form).Close();
         }
     }

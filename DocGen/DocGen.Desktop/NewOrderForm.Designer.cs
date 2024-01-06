@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txb_note = new System.Windows.Forms.RichTextBox();
+            this.txb_Note = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txb_Description = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -63,7 +63,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txb_note);
+            this.groupBox1.Controls.Add(this.txb_Note);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txb_Description);
             this.groupBox1.Controls.Add(this.label2);
@@ -78,11 +78,11 @@
             // 
             // txb_note
             // 
-            this.txb_note.Location = new System.Drawing.Point(661, 28);
-            this.txb_note.Name = "txb_note";
-            this.txb_note.Size = new System.Drawing.Size(273, 104);
-            this.txb_note.TabIndex = 6;
-            this.txb_note.Text = "";
+            this.txb_Note.Location = new System.Drawing.Point(661, 28);
+            this.txb_Note.Name = "txb_note";
+            this.txb_Note.Size = new System.Drawing.Size(273, 104);
+            this.txb_Note.TabIndex = 6;
+            this.txb_Note.Text = "";
             // 
             // label3
             // 
@@ -164,7 +164,7 @@
             this.dt_StartDate.ShowCheckBox = true;
             this.dt_StartDate.Size = new System.Drawing.Size(330, 26);
             this.dt_StartDate.TabIndex = 1;
-            this.dt_StartDate.ValueChanged += new System.EventHandler(this.dt_startDate_ValueChanged);
+            this.dt_StartDate.ValueChanged += new System.EventHandler(this.dt_StartDate_ValueChanged);
             // 
             // label4
             // 
@@ -362,7 +362,7 @@
         private System.Windows.Forms.TextBox txb_OrderName;
         private System.Windows.Forms.RichTextBox txb_Description;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RichTextBox txb_note;
+        private System.Windows.Forms.RichTextBox txb_Note;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label4;

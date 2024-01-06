@@ -183,6 +183,7 @@
             this.btn_EditOrder.TabIndex = 1;
             this.btn_EditOrder.Text = "Редагувати";
             this.btn_EditOrder.UseVisualStyleBackColor = true;
+            this.btn_EditOrder.Click += new System.EventHandler(this.btn_EditOrder_Click);
             // 
             // btn_AddOrder
             // 
@@ -255,8 +256,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGrid_sector;
-        private System.Windows.Forms.DataGridViewTextBoxColumn locationDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn zoneDataGridViewTextBoxColumn;
         private System.Windows.Forms.Button btn_AddOrder;
         private System.Windows.Forms.Button btn_RemoveOrder;
         private System.Windows.Forms.Button btn_EditOrder;
