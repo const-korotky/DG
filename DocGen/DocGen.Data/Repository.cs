@@ -559,7 +559,6 @@ namespace DocGen.Data
                 row.Delete();
             }
         }
-
         private void SaveLocations(Workbook workbook)
         {
             var newLocations = Location.Where(i => i.IsNew).ToList();
@@ -575,25 +574,21 @@ namespace DocGen.Data
             {
                 var cells = row.Cells.Cast<Range>().ToList();
                 var locationName = TrimDataString(cells[0].Value);
-                if (string.IsNullOrWhiteSpace(locationName))
+                if (!string.IsNullOrWhiteSpace(locationName))
                 {
-                    var newLocationName = newLocations[index].Name;
-                    cells[0].Value = newLocationName;
-                    cells[1].Value = FormatLocationCodeName(newLocationName);
-                    ++index;
-                    if (index == newLocationsCount)
-                    {
-                        break;
-                    }
+                    continue;
+                }
+                var newLocationName = newLocations[index].Name;
+                cells[0].Value = newLocationName;
+                cells[1].Value = FormatLocationCodeName(newLocationName);
+                if (++index == newLocationsCount)
+                {
+                    break;
                 }
             }
             while (index < newLocationsCount)
             {
-                Range row = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION").Rows.Cast<Range>().FirstOrDefault();
-                if (row == null)
-                {
-                    return;
-                }
+                Range row = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION").Rows.Cast<Range>().First();
                 row.Insert(XlInsertShiftDirection.xlShiftDown);
                 row = GetTable(workbook, "ЛОКАЦІЯ", "LOCATION").Rows.Cast<Range>().First();
 
@@ -606,10 +601,47 @@ namespace DocGen.Data
                 ++index;
             }
         }
-
         private void SaveOrders(Workbook workbook)
         {
+            var newOrders = Order.Where(i => i.IsNew).ToList();
+            var newOrdersCount = newOrders.Count;
+            if (newOrdersCount < 1)
+            {
+                return;
+            }
+            var index = 0;
 
+            Range table = GetTable(workbook, "НАКАЗ", "ORDER");
+            foreach (Range row in table.Rows)
+            {
+                var cells = row.Cells.Cast<Range>().ToList();
+                var orderName = TrimDataString(cells[0].Value);
+                if (!string.IsNullOrWhiteSpace(orderName))
+                {
+                    continue;
+                }
+                cells[0].Value = newOrders[index].Name;
+                cells[1].Value = newOrders[index].Description;
+                cells[2].Value = newOrders[index].CodeName;
+                if (++index == newOrdersCount)
+                {
+                    break;
+                }
+            }
+            while (index < newOrdersCount)
+            {
+                Range row = GetTable(workbook, "НАКАЗ", "ORDER").Rows.Cast<Range>().First();
+                row.Insert(XlInsertShiftDirection.xlShiftDown);
+                row = GetTable(workbook, "НАКАЗ", "ORDER").Rows.Cast<Range>().First();
+
+                var cells = row.Cells.Cast<Range>().ToList();
+
+                cells[0].Value = newOrders[index].Name;
+                cells[1].Value = newOrders[index].Description;
+                cells[2].Value = newOrders[index].CodeName;
+
+                ++index;
+            }
         }
 
         #endregion Save
