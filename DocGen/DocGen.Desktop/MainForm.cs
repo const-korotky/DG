@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using DocGen.Data;
 using DocGen.Processor;
 
+
 namespace DocGen.Desktop
 {
     public partial class MainForm : Form
@@ -192,19 +193,43 @@ namespace DocGen.Desktop
             }
             return true;
         }
-
-        private void menuItem_Order_Click(object sender, EventArgs e)
+        private bool CheckDataStoreLoaded()
         {
             if (_datastore == null)
             {
                 DialogBox.ShowWarning(this, $"Завантажте файл Бази Даних.");
-                return;
+                return false;
             }
-            (new SectorForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
+            return true;
         }
+
+        private void menuItem_Order_Click(object sender, EventArgs e)
+        {
+            if (CheckDataStoreLoaded())
+            {
+                (new SectorForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
+            }
+        }
+        private void menuItem_Inactive_Click(object sender, EventArgs e)
+        {
+            if (CheckDataStoreLoaded())
+            {
+                //(new InactiveForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
+            }
+        }
+
 
         private void btn_loadDb_Click(object sender, EventArgs e)
         {
+            if (!File.Exists(ExcelProcessor.SourceFilePath))
+            {
+                var text =
+                    string.IsNullOrWhiteSpace(ExcelProcessor.SourceFilePath)
+                        ? "Оберіть файл Бази Даних."
+                        : $"Файл \"{ExcelProcessor.SourceFilePath}\" не існує.";
+                DialogBox.ShowWarning(this, text);
+                return;
+            }
             gb_progress.Visible = true;
             ExcelProcessor.ProgressUpdatedEvent += progressUpdated_EventHandler;
             _datastore = ExcelProcessor.LoadDatastoreOnDemand();

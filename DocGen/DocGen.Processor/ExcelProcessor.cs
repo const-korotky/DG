@@ -17,6 +17,8 @@ namespace DocGen.Processor
 {
     public class ExcelProcessor : BaseProcessor
     {
+        #region Properties and Fields
+
         private const string URL_PERSON_STATUS = @"https://drive.google.com/uc?id=1R_1OYK2GY3sZDnfRLHz9Qc0nX_hPG1CZ&export=download";
 
         public PrintOption PrintOptions { get; set; } = PrintOption.Order;
@@ -24,6 +26,8 @@ namespace DocGen.Processor
 
         public DateTime StartDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         public DateTime EndDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1);
+
+        #endregion Properties and Fields
 
         public override void OpenDocumnet(string filePath)
         {
@@ -68,41 +72,6 @@ namespace DocGen.Processor
         }
 
         #region Load/Update Datastore
-
-        public Datastore LoadDatastoreOnDemand()
-        {
-            ExcelApplication excel = new ExcelApplication();
-            Workbook workbook = null;
-            try
-            {
-                UpdateProgress(0, "Відкриття бази даних....");
-                workbook = excel.Workbooks.Open(SourceFilePath);
-                UpdateProgress(20, "Бази даних відкрита.");
-
-                UpdateProgress(20, "Розпочато завантаження бази даних....");
-                var datastore = new Datastore(IncrementProgressBy);
-
-                datastore.Load(workbook, StartDate, EndDate);
-                UpdateProgress(90, "Завантаження бази даних завершено.");
-
-                workbook.Close(SaveChanges: false);
-
-                excel.Quit();
-                UpdateProgress(100, "Операцію завершено.");
-
-                return datastore;
-            }
-            catch (Exception e) { return null; }
-            catch { return null; }
-            finally
-            {
-                if (workbook != null)
-                {
-                    Marshal.FinalReleaseComObject(workbook);
-                }
-                Marshal.FinalReleaseComObject(excel);
-            }
-        }
 
         public void LoadDatastore(Workbook workbook, bool reload = false)
         {
@@ -166,6 +135,41 @@ namespace DocGen.Processor
             catch { return null; }
         }
 
+
+        public Datastore LoadDatastoreOnDemand()
+        {
+            ExcelApplication excel = new ExcelApplication();
+            Workbook workbook = null;
+            try
+            {
+                UpdateProgress(0, "Відкриття бази даних....");
+                workbook = excel.Workbooks.Open(SourceFilePath);
+                UpdateProgress(20, "Бази даних відкрита.");
+
+                UpdateProgress(20, "Розпочато завантаження бази даних....");
+                var datastore = new Datastore(IncrementProgressBy);
+
+                datastore.Load(workbook, StartDate, EndDate);
+                UpdateProgress(90, "Завантаження бази даних завершено.");
+
+                workbook.Close(SaveChanges: false);
+
+                excel.Quit();
+                UpdateProgress(100, "Операцію завершено.");
+
+                return datastore;
+            }
+            catch (Exception e) { return null; }
+            catch { return null; }
+            finally
+            {
+                if (workbook != null)
+                {
+                    Marshal.FinalReleaseComObject(workbook);
+                }
+                Marshal.FinalReleaseComObject(excel);
+            }
+        }
         public void SaveDatastoreOnDemand(Datastore datastore)
         {
             ExcelApplication excel = new ExcelApplication();

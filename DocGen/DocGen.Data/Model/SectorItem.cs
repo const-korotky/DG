@@ -132,4 +132,74 @@ namespace DocGen.Data.Model
             }
         }
     }
+
+
+    public class InactiveItem : Entity, INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void FirePropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private string _personName;
+        public string PersonName
+        {
+            get { return _personName; }
+            set
+            {
+                if (_personName != value)
+                {
+                    _personName = value;
+                    FirePropertyChanged("PersonName");
+                }
+            }
+        }
+
+        private DateTime? _startDate;
+        public DateTime? StartDate
+        {
+            get { return _startDate; }
+            set
+            {
+                if (_startDate != value)
+                {
+                    _startDate = value;
+                    FirePropertyChanged("StartDate");
+                }
+            }
+        }
+
+        private DateTime? _endDate;
+        public DateTime? EndDate
+        {
+            get { return _endDate; }
+            set
+            {
+                if (_endDate != value)
+                {
+                    _endDate = value;
+                    FirePropertyChanged("EndDate");
+                }
+            }
+        }
+
+        private string _note;
+        public string Note
+        {
+            get { return _note; }
+            set
+            {
+                if (_note != value)
+                {
+                    _note = value;
+                    FirePropertyChanged("Note");
+                }
+            }
+        }
+    }
 }

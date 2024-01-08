@@ -63,6 +63,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Order = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItem_Inactive = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gb_result.SuspendLayout();
@@ -430,7 +431,8 @@
             this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItem_Order});
+            this.menuItem_Order,
+            this.menuItem_Inactive});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(923, 33);
@@ -443,6 +445,13 @@
             this.menuItem_Order.Size = new System.Drawing.Size(86, 29);
             this.menuItem_Order.Text = "Накази";
             this.menuItem_Order.Click += new System.EventHandler(this.menuItem_Order_Click);
+            // 
+            // menuItem_Inactive
+            // 
+            this.menuItem_Inactive.Name = "menuItem_Inactive";
+            this.menuItem_Inactive.Size = new System.Drawing.Size(118, 29);
+            this.menuItem_Inactive.Text = "Незалучені";
+            this.menuItem_Inactive.Click += new System.EventHandler(this.menuItem_Inactive_Click);
             // 
             // MainForm
             // 
@@ -517,6 +526,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuItem_Order;
         private System.Windows.Forms.Button btn_loadDb;
+        private System.Windows.Forms.ToolStripMenuItem menuItem_Inactive;
     }
 }
 

@@ -19,6 +19,7 @@ namespace DocGen.Data
 
         protected readonly List<PersonStatusRecord> PersonStatusRecords;
         public readonly List<SectorItem> SectorItems;
+        public readonly List<InactiveItem> InactiveItems;
 
         public readonly List<Person> Person;
         public readonly List<Location> Location;
@@ -165,6 +166,10 @@ namespace DocGen.Data
             {
                 var cells = row.Cells.Cast<Range>().ToList();
 
+                InactiveItem inactiveItem = new InactiveItem();
+                inactiveItem.StartDate = cells[1].Value;
+                inactiveItem.EndDate = cells[2].Value;
+
                 DateTimeInterval interval = ComposeInterval(cells[1].Value, cells[2].Value, startDate, endDate);
                 if (interval == null)
                 {
@@ -174,14 +179,20 @@ namespace DocGen.Data
                 interval.IsInactive = true;
                 interval.Description = TrimDataString(cells[3].Value);
 
-                var name = TrimDataString(cells[0].Value);
-                var person = Person.FirstOrDefault(i => i.Name == name);
+                inactiveItem.Note = interval.Description;
+
+                var personName = TrimDataString(cells[0].Value);
+                var person = Person.FirstOrDefault(i => i.Name == personName);
                 if (person != null)
                 {
                     person.Inactive.Add(interval);
                 }
+                inactiveItem.PersonName = personName;
+
                 Console.WriteLine($"{person} {interval}");
                 IncrementProgressBy(0.03);
+
+                InactiveItems.Add(inactiveItem);
             }
         }
         public void LoadSector(Range table, DateTime? startDate = null, DateTime? endDate = null)
