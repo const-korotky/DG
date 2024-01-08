@@ -46,6 +46,7 @@ namespace DocGen.Processor
             {
                 if (doc != null)
                 {
+                    try { doc.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(doc);
                 }
                 Marshal.FinalReleaseComObject(word);
@@ -226,6 +227,7 @@ namespace DocGen.Processor
             {
                 if (doc != null)
                 {
+                    try { doc.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(doc);
                 }
                 Marshal.FinalReleaseComObject(word);

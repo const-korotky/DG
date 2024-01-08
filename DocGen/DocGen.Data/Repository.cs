@@ -39,6 +39,7 @@ namespace DocGen.Data
 
             PersonStatusRecords = new List<PersonStatusRecord>();
             SectorItems = new List<SectorItem>();
+            InactiveItems = new List<InactiveItem>();
         }
 
         #region Load
@@ -424,7 +425,7 @@ namespace DocGen.Data
 
         public void PopulateInactiveIntervals(Workbook workbook)
         {
-            GroupRecordsByPerson
+            GroupStatusRecordsByPerson
                 ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals
                 , out Dictionary<string, List<PersonStatusRecord>> recordsDictionary
                 );
@@ -440,6 +441,12 @@ namespace DocGen.Data
             ( Workbook workbook
             , Dictionary<string, List<DateTimeInterval>> inactiveIntervals
             ) {
+            Range rows = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows;
+            if (rows.Count > 1)
+            {
+                rows.Delete();
+            }
+
             Range row = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().FirstOrDefault();
             if (row == null)
             {
@@ -463,7 +470,6 @@ namespace DocGen.Data
                 }
             }
         }
-
         private static void ComposePersonInactiveIntervals
             ( Dictionary<string, List<PersonStatusRecord>> recordsDictionary
             , Dictionary<string, List<DateTimeInterval>> inactiveIntervals
@@ -504,8 +510,7 @@ namespace DocGen.Data
                 }
             }
         }
-
-        private void GroupRecordsByPerson
+        private void GroupStatusRecordsByPerson
             ( out Dictionary<string, List<DateTimeInterval>> inactiveIntervals
             , out Dictionary<string, List<PersonStatusRecord>> dictionary
             ) {
@@ -538,8 +543,11 @@ namespace DocGen.Data
 
         private void SaveSectorItems(Workbook workbook)
         {
-            Range table = GetTable(workbook, "СЕКТОР", "SECTOR");
-            table.Rows.Delete();
+            Range rows = GetTable(workbook, "СЕКТОР", "SECTOR").Rows;
+            if (rows.Count > 1)
+            {
+                rows.Delete();
+            }
 
             Range row = GetTable(workbook, "СЕКТОР", "SECTOR").Rows.Cast<Range>().FirstOrDefault();
             if (row == null)

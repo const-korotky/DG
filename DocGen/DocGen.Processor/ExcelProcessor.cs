@@ -65,6 +65,7 @@ namespace DocGen.Processor
             {
                 if (workbook != null)
                 {
+                    try { workbook.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(workbook);
                 }
                 Marshal.FinalReleaseComObject(excel);
@@ -79,7 +80,7 @@ namespace DocGen.Processor
             {
                 Datastore = new Datastore(IncrementProgressBy);
             }
-            LoadPersonStatusRecords();
+            LoadPersonStatusRecords(Datastore);
             Datastore.PopulateInactiveIntervals(workbook);
             if (!Datastore.IsLoaded)
             {
@@ -91,7 +92,7 @@ namespace DocGen.Processor
             }
         }
 
-        public void LoadPersonStatusRecords()
+        public void LoadPersonStatusRecords(Datastore datastore)
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, $"Inactive{DateTime.Now.Ticks}.xlsx");
 
@@ -105,7 +106,7 @@ namespace DocGen.Processor
             try
             {
                 workbook = excel.Workbooks.Open(file.FullName);
-                Datastore.LoadPersonStatusRecords(workbook);
+                datastore.LoadPersonStatusRecords(workbook);
                 workbook.Close(SaveChanges: false);
                 excel.Quit();
             }
@@ -115,6 +116,7 @@ namespace DocGen.Processor
             {
                 if (workbook != null)
                 {
+                    try { workbook.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(workbook);
                 }
                 Marshal.FinalReleaseComObject(excel);
@@ -147,7 +149,10 @@ namespace DocGen.Processor
                 UpdateProgress(20, "Бази даних відкрита.");
 
                 UpdateProgress(20, "Розпочато завантаження бази даних....");
+
                 var datastore = new Datastore(IncrementProgressBy);
+                LoadPersonStatusRecords(datastore);
+                datastore.PopulateInactiveIntervals(workbook);
 
                 datastore.Load(workbook, StartDate, EndDate);
                 UpdateProgress(90, "Завантаження бази даних завершено.");
@@ -165,6 +170,7 @@ namespace DocGen.Processor
             {
                 if (workbook != null)
                 {
+                    try { workbook.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(workbook);
                 }
                 Marshal.FinalReleaseComObject(excel);
@@ -187,6 +193,7 @@ namespace DocGen.Processor
             {
                 if (workbook != null)
                 {
+                    try { workbook.Close(SaveChanges: false); } catch { }
                     Marshal.FinalReleaseComObject(workbook);
                 }
                 Marshal.FinalReleaseComObject(excel);
