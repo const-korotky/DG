@@ -214,7 +214,7 @@ namespace DocGen.Desktop
         {
             if (CheckDataStoreLoaded())
             {
-                //(new InactiveForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
+                (new InactiveForm(ExcelProcessor, WordProcessor, _datastore)).ShowDialog(this);
             }
         }
 

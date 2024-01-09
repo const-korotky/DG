@@ -444,7 +444,7 @@ namespace DocGen.Data
             Range rows = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows;
             if (rows.Count > 1)
             {
-                rows.Delete();
+                //rows.Delete();
             }
 
             Range row = GetTable(workbook, "НЕЗАДІЯНІ", "INACTIVE").Rows.Cast<Range>().FirstOrDefault();

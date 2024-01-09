@@ -13,3 +13,4 @@ examples
 /DocGen/DocGen.Desktop/obj
 /DocGen/DocGen.Data/obj
 /DocGen/DocGen.Data/bin
+/DocGen/DocGen.Desktop/.vs/DocGen.Desktop.csproj.dtbcache.json
