@@ -233,8 +233,7 @@ namespace DocGen.Processor
                 Marshal.FinalReleaseComObject(word);
             }
         }
-
-        public void FormatOrderDocument(Datastore datastore, SectorItem sectorItem, WordDocument doc)
+        private void FormatOrderDocument(Datastore datastore, SectorItem sectorItem, WordDocument doc)
         {
             doc.Content.Find.Execute(FindText: "$location$",
                                     MatchCase: false,
@@ -286,6 +285,7 @@ namespace DocGen.Processor
                                     );
         }
 
+
         private string FormatPersons(Datastore datastore, SectorItem sectorItem)
         {
             var persons = new List<string>();
@@ -300,6 +300,86 @@ namespace DocGen.Processor
                 }
             }
             return string.Join(Environment.NewLine, persons);
+        }
+        private string FormatPersonName(Datastore datastore, InactiveItem inactiveItem)
+        {
+            var person = datastore.Person.FirstOrDefault(i => i.Name == inactiveItem.PersonName);
+            if (person != null)
+            {
+                string rank = person.Rank;
+                rank = $"{char.ToUpper(rank[0])}{rank.Substring(1)}";
+                return $"{rank} {person.Name}";
+            }
+            return string.Empty;
+        }
+
+
+        public string CreateExcludeDocument(Datastore datastore, List<InactiveItem> inactiveItems)
+        {
+            WordApplication word = new WordApplication();
+            WordDocument doc = null;
+            try
+            {
+                doc = word.Documents.Open(@"D:\MSC\DG\work\Рапорт Виведення з УМП.шаблон.docx", ReadOnly: true, Visible: false);
+
+                FormatExcludeDocument(datastore, inactiveItems, doc);
+
+                var filePath = $"D:\\MSC\\DG\\work\\Рапорт Виведення з УМП.{DateTime.Now:dd.MM.yyyy_HH.mm.ss.ffff}.docx";
+                doc.SaveAs(filePath);
+                doc.Close(SaveChanges: false);
+
+                word.Quit();
+
+                return filePath;
+            }
+            catch (Exception e) { return null; }
+            catch { return null; }
+            finally
+            {
+                if (doc != null)
+                {
+                    try { doc.Close(SaveChanges: false); }
+                    catch { }
+                    Marshal.FinalReleaseComObject(doc);
+                }
+                Marshal.FinalReleaseComObject(word);
+            }
+        }
+        private void FormatExcludeDocument(Datastore datastore, List<InactiveItem> inactiveItems, WordDocument doc)
+        {
+            for (int i = 0; i < inactiveItems.Count; i++)
+            {
+                doc.Content.Find.Execute(FindText: $"$_RN_{i+1}_$",
+                                        MatchCase: false,
+                                        MatchWholeWord: false,
+                                        MatchWildcards: false,
+                                        MatchSoundsLike: false,
+                                        MatchAllWordForms: false,
+                                        Forward: true, //this may be the one
+                                        Wrap: false,
+                                        Format: false,
+                                        ReplaceWith: FormatPersonName(datastore, inactiveItems[i]),
+                                        Replace: WdReplace.wdReplaceAll
+                                        );
+            }
+
+            string date = (( (inactiveItems.Count > 0) && inactiveItems[0].StartDate.HasValue )
+                          ? inactiveItems[0].StartDate.Value
+                          : DateTime.Today
+                          ).ToString("dd.MM.yyyy");
+
+            doc.Content.Find.Execute(FindText: "$_DT_$",
+                                    MatchCase: false,
+                                    MatchWholeWord: false,
+                                    MatchWildcards: false,
+                                    MatchSoundsLike: false,
+                                    MatchAllWordForms: false,
+                                    Forward: true, //this may be the one
+                                    Wrap: false,
+                                    Format: false,
+                                    ReplaceWith: date,
+                                    Replace: WdReplace.wdReplaceAll
+                                    );
         }
     }
 }

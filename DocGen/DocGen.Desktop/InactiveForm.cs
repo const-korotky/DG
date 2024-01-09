@@ -94,6 +94,8 @@ namespace DocGen.Desktop
             {
                 data.Insert(0, item);
             }
+
+            _wordProcessor.OpenDocumnet(_wordProcessor.CreateExcludeDocument(_datastore, excludePersonForm.ResultItems));
         }
     }
 }
