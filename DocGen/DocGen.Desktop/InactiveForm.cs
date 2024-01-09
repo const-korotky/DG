@@ -31,23 +31,6 @@ namespace DocGen.Desktop
             dataGrid_inactive.DataSource = new BindingList<InactiveItem>(datastore.InactiveItems);
         }
 
-        /*private void btn_AddOrder_Click(object sender, EventArgs e)
-        {
-            (dataGrid_sector.DataSource as BindingList<SectorGridDataSourceItem>)
-                .Add(new SectorGridDataSourceItem
-                    {
-                        OrderName = "OrderName",
-                        StartDate = DateTime.Today,
-                        EndDate = DateTime.Today,
-                        Persons = "<empty>",
-                        LocationName = "Location",
-                        Description = "Description",
-                        Note = "Note",
-                        ZoneName = "Zone",
-                        IsNew = true,
-                });
-        }*/
-
         private void btn_Remove_Click(object sender, EventArgs e)
         {
             var data = (dataGrid_inactive.DataSource as BindingList<InactiveItem>);
@@ -95,6 +78,22 @@ namespace DocGen.Desktop
             Application.DoEvents();
             //_excelProcessor.SaveDatastoreOnDemand(_datastore);
             (sender as Form).Close();
+        }
+
+        private void btn_Exclude_Click(object sender, EventArgs e)
+        {
+            var excludePersonForm = new ExcludePersonForm(_datastore);
+            excludePersonForm.ShowDialog(this);
+
+            if (excludePersonForm.Result != DialogResult.OK)
+            {
+                return;
+            }
+            var data = (dataGrid_inactive.DataSource as BindingList<InactiveItem>);
+            foreach (var item in excludePersonForm.ResultItems)
+            {
+                data.Insert(0, item);
+            }
         }
     }
 }

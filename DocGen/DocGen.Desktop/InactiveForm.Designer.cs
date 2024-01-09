@@ -186,6 +186,7 @@
             this.btn_Exclude.TabIndex = 3;
             this.btn_Exclude.Text = "Вилучити";
             this.btn_Exclude.UseVisualStyleBackColor = true;
+            this.btn_Exclude.Click += new System.EventHandler(this.btn_Exclude_Click);
             // 
             // groupBox3
             // 

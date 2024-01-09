@@ -76,10 +76,10 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Загальний Опис";
             // 
-            // txb_note
+            // txb_Note
             // 
             this.txb_Note.Location = new System.Drawing.Point(661, 28);
-            this.txb_Note.Name = "txb_note";
+            this.txb_Note.Name = "txb_Note";
             this.txb_Note.Size = new System.Drawing.Size(273, 104);
             this.txb_Note.TabIndex = 6;
             this.txb_Note.Text = "";
@@ -157,10 +157,10 @@
             this.label5.TabIndex = 2;
             this.label5.Text = "Дата Кінця:";
             // 
-            // dt_startDate
+            // dt_StartDate
             // 
             this.dt_StartDate.Location = new System.Drawing.Point(131, 28);
-            this.dt_StartDate.Name = "dt_startDate";
+            this.dt_StartDate.Name = "dt_StartDate";
             this.dt_StartDate.ShowCheckBox = true;
             this.dt_StartDate.Size = new System.Drawing.Size(330, 26);
             this.dt_StartDate.TabIndex = 1;
@@ -260,7 +260,7 @@
             // btn_remove
             // 
             this.btn_remove.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
-            this.btn_remove.Location = new System.Drawing.Point(467, 150);
+            this.btn_remove.Location = new System.Drawing.Point(467, 176);
             this.btn_remove.Name = "btn_remove";
             this.btn_remove.Size = new System.Drawing.Size(131, 32);
             this.btn_remove.TabIndex = 5;
@@ -271,7 +271,7 @@
             // btn_add
             // 
             this.btn_add.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(254)));
-            this.btn_add.Location = new System.Drawing.Point(467, 188);
+            this.btn_add.Location = new System.Drawing.Point(467, 138);
             this.btn_add.Name = "btn_add";
             this.btn_add.Size = new System.Drawing.Size(131, 32);
             this.btn_add.TabIndex = 4;
